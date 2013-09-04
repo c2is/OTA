@@ -1,0 +1,16 @@
+{
+    "name": "c2is/ota",
+    "description": "C2is OTA Library",
+    "keywords": [],
+    "authors": [
+        {
+            "name": "Guillaume Manen",
+            "email": "g.manen@c2is.fr"
+        }
+    ],
+    "autoload": {
+        "psr-0": { "C2is\\OTA": "" }
+    },
+    "target-dir": "C2is/OTA",
+    "minimum-stability": "dev"
+}
