@@ -1,6 +1,6 @@
 <?php
 
-namespace C2is\Bundle\OtaBundle\OTA\Request;
+namespace C2is\OTA\Message\Request;
 
 use C2is\OTA\Message\AbstractMessage;
 
@@ -56,6 +56,7 @@ class HotelAvail extends AbstractMessage
         $availRequestSegment = $dom->createElement('AvailRequestSegment');
         $availRequestSegment->setAttribute('AvailReqType', $this->getParam('type', 'Room'));
 
+        $duration = null;
         if ($startDate = $this->getParam('date_range.start_date') and ($endDate = $this->getParam('date_range.end_date') or $duration = $this->getParam('date_range.duration'))) {
             $stayDateRange = $dom->createElement('StayDateRange');
             $stayDateRange->setAttribute('Start', $startDate);
