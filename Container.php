@@ -6,10 +6,45 @@ use C2is\OTA\Message\AbstractMessage;
 
 abstract class Container
 {
+    /**
+     * Age Qualifying Code for infants
+     */
+    const _AGE_CODE_INFANT = 7;
+
+    /**
+     * Age Qualifying Code for children
+     */
+    const _AGE_CODE_CHILDREN = 8;
+
+    /**
+     * Age Qualifying Code for juniors
+     */
+    const _AGE_CODE_JUNIOR = 8;
+
+    /**
+     * Age Qualifying Code for adults
+     */
+    const _AGE_CODE_ADULT = 8;
+
+    /**
+     * Age Qualifying Code for seniors
+     */
+    const _AGE_CODE_SENIOR = 8;
+
+    /**
+     * @var AbstractMessage
+     */
     protected $message;
 
+    /**
+     * @var string
+     */
     protected $service;
 
+    /**
+     * @param $service
+     * @param $content
+     */
     public function __construct($service, $content)
     {
         if (!class_exists($messageClass = sprintf('\\C2is\\OTA\\Message\\%s\\%s', $this->getType(), $service)) or ! (($message = new $messageClass()) instanceof AbstractMessage)) {
@@ -26,30 +61,49 @@ abstract class Container
         $this->message = $message;
     }
 
+    /**
+     * @return AbstractMessage
+     */
     public function getMessage()
     {
         return $this->message;
     }
 
+    /**
+     * @return string
+     */
     public function getService()
     {
         return $this->service;
     }
 
+    /**
+     * @return string
+     */
     public function getXml()
     {
         return $this->message->getXml();
     }
 
+    /**
+     * @param array $params
+     */
     public function addParams(array $params)
     {
         $this->message->addParams($params);
     }
 
+    /**
+     * @param $key
+     * @param $value
+     */
     public function addParam($key, $value)
     {
         $this->message->addParam($key, $value);
     }
 
+    /**
+     * @return mixed
+     */
     abstract protected function getType();
 }
