@@ -19,17 +19,17 @@ abstract class Container
     /**
      * Age Qualifying Code for juniors
      */
-    const _AGE_CODE_JUNIOR = 8;
+    const _AGE_CODE_JUNIOR = 9;
 
     /**
      * Age Qualifying Code for adults
      */
-    const _AGE_CODE_ADULT = 8;
+    const _AGE_CODE_ADULT = 10;
 
     /**
      * Age Qualifying Code for seniors
      */
-    const _AGE_CODE_SENIOR = 8;
+    const _AGE_CODE_SENIOR = 11;
 
     /**
      * @var AbstractMessage
