@@ -81,9 +81,9 @@ class HotelSearch extends AbstractMessage
         if ($rooms = $this->getParam('rooms') and is_array($rooms)) {
             $criterion          = $dom->createElement('Criterion');
             $roomStayCandidates = $dom->createElement('RoomStayCandidates');
-            $roomStayCandidate  = $dom->createElement('RoomStayCandidate');
 
             foreach ($rooms as $room) {
+                $roomStayCandidate  = $dom->createElement('RoomStayCandidate');
                 $guestCounts = $dom->createElement('GuestCounts');
                 foreach ($room as $guest) {
                     $guestCount = $dom->createElement('GuestCount');
@@ -97,9 +97,9 @@ class HotelSearch extends AbstractMessage
                     $guestCounts->appendChild($guestCount);
                 }
                 $roomStayCandidate->appendChild($guestCounts);
+                $roomStayCandidates->appendChild($roomStayCandidate);
             }
 
-            $roomStayCandidates->appendChild($roomStayCandidate);
             $criterion->appendChild($roomStayCandidates);
             $criteria->appendChild($criterion);
         }
