@@ -36,28 +36,31 @@ class HotelSearch extends AbstractResponse
     {
         $this->params['hotels'] = array();
         $xml = simplexml_load_string($xml);
+        $xmlAttributes = $xml->attributes();
 
         $rootAttributes = $xml->attributes();
         if (!isset($rootAttributes['EchoToken'])) {
             throw new \Exception('Invalid XML : Root element must have an attribute named EchoToken.');
         }
-        $this->addParam('echo', (string) $xml->attributes()['EchoToken']);
+        $this->addParam('echo', (string) $xmlAttributes['EchoToken']);
         if (!isset($rootAttributes['Version'])) {
             throw new \Exception('Invalid XML : Root element must have an attribute named Version.');
         }
-        $this->addParam('ota.version', (string) $xml->attributes()['Version']);
+        $this->addParam('ota.version', (string) $xmlAttributes['Version']);
 
         if ($xml->Properties->Property) {
             foreach ($xml->Properties->Property as $result) {
+                $resultAttributes = $result->attributes();
                 $hotel = array();
-                $hotel['chain_code'] = (string) $result->attributes()['ChainCode'];
-                $hotel['code'] = (string) $result->attributes()['HotelCode'];
+                $hotel['chain_code'] = (string) $resultAttributes['ChainCode'];
+                $hotel['code'] = (string) $resultAttributes['HotelCode'];
 
                 if ($result->RateRange) {
+                    $rateRangeAttributes = $result->RateRange->attributes();
                     $hotel['rate_range'] = array();
-                    $hotel['rate_range']['currency'] = (string) $result->RateRange->attributes()['CurrencyCode'];
-                    $hotel['rate_range']['max_rate'] = (string) $result->RateRange->attributes()['MaxRate'];
-                    $hotel['rate_range']['min_rate'] = (string) $result->RateRange->attributes()['MinRate'];
+                    $hotel['rate_range']['currency'] = (string) $rateRangeAttributes['CurrencyCode'];
+                    $hotel['rate_range']['max_rate'] = (string) $rateRangeAttributes['MaxRate'];
+                    $hotel['rate_range']['min_rate'] = (string) $rateRangeAttributes['MinRate'];
 
                     if ($result->TPA_Extensions) {
                         $roomTypes = array(
@@ -65,13 +68,16 @@ class HotelSearch extends AbstractResponse
                             'max' => array(),
                         );
                         foreach ($result->TPA_Extensions->RateRangeLabels->RateRangeLabel as $rateRangeLabel) {
-                            $lang = (string) $rateRangeLabel->attributes()['Langcode'];
-                            $roomTypes['min']['code'] = (string) $rateRangeLabel->MinLabel->attributes()['RoomTypeCode'];
-                            $roomTypes['min']['context'] = (string) $rateRangeLabel->MinLabel->attributes()['RoomTypeCodeContext'];
+                            $rateRangeLabelAttributes = $rateRangeLabel->attributes();
+                            $minLabelAttributes = $rateRangeLabel->MinLabel->attributes();
+                            $maxLabelAttributes = $rateRangeLabel->MaxLabel->attributes();
+                            $lang = (string) $rateRangeLabelAttributes['Langcode'];
+                            $roomTypes['min']['code'] = (string) $minLabelAttributes['RoomTypeCode'];
+                            $roomTypes['min']['context'] = (string) $minLabelAttributes['RoomTypeCodeContext'];
                             $roomTypes['min']['labels'][$lang] = (string) utf8_decode($rateRangeLabel->MinLabel[0]);
 
-                            $roomTypes['max']['code'] = (string) $rateRangeLabel->MaxLabel->attributes()['RoomTypeCode'];
-                            $roomTypes['max']['context'] = (string) $rateRangeLabel->MaxLabel->attributes()['RoomTypeCodeContext'];
+                            $roomTypes['max']['code'] = (string) $maxLabelAttributes['RoomTypeCode'];
+                            $roomTypes['max']['context'] = (string) $maxLabelAttributes['RoomTypeCodeContext'];
                             $roomTypes['max']['labels'][$lang] = (string) utf8_decode($rateRangeLabel->MaxLabel[0]);
                         }
 
