@@ -6,7 +6,7 @@ namespace C2is\OTA\Model\HotelSearch;
  * Data class used to hold the results of an HotelSearch request.
  *
  * Class HotelSearchData
- * @package C2is\Bundle\OtaBundle\Model
+ * @package C2is\Bundle\OtaBundle\Model\HotelSearch
  */
 class HotelSearchData
 {

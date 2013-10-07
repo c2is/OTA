@@ -6,7 +6,7 @@ namespace C2is\OTA\Model\HotelSearch;
  * Data class used to hold data for a room type.
  *
  * Class RoomTypeData
- * @package C2is\Bundle\OtaBundle\Model
+ * @package C2is\Bundle\OtaBundle\Model\HotelSearch
  */
 class RoomTypeData
 {
