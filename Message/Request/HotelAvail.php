@@ -57,7 +57,7 @@ class HotelAvail extends AbstractMessage
         $availRequestSegment->setAttribute('AvailReqType', $this->getParam('type', 'Room'));
 
         $duration = null;
-        if ($startDate = $this->getParam('date_range.start_date') and ($endDate = $this->getParam('date_range.end_date') or $duration = $this->getParam('date_range.duration'))) {
+        if ($startDate = date('Y-m-d', strtotime($this->getParam('date_range.start_date'))) and ($endDate = date('Y-m-d', strtotime($this->getParam('date_range.end_date'))) or $duration = $this->getParam('date_range.duration'))) {
             $stayDateRange = $dom->createElement('StayDateRange');
             $stayDateRange->setAttribute('Start', $startDate);
             if ($endDate) {
@@ -85,7 +85,7 @@ class HotelAvail extends AbstractMessage
 
             foreach ($rooms as $room) {
                 $roomStayCandidate  = $dom->createElement('RoomStayCandidate');
-                $roomStayCandidate->setAttribute('Count', $room['count']);
+                $roomStayCandidate->setAttribute('Quantity', $room['quantity']);
                 $guestCounts = $dom->createElement('GuestCounts');
                 foreach ($room as $guest) {
                     $guestCount = $dom->createElement('GuestCount');
