@@ -1,6 +1,6 @@
 <?php
 
-namespace C2is\OTA\Model;
+namespace C2is\OTA\Model\HotelSearch;
 
 /**
  * Data class used to hold data for a room type.

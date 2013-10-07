@@ -2,9 +2,9 @@
 
 namespace C2is\OTA\Message\Response;
 
-use C2is\OTA\Model\HotelSearchData;
-use C2is\OTA\Model\RateRangeData;
-use C2is\OTA\Model\RoomTypeData;
+use C2is\OTA\Model\HotelSearch\HotelSearchData;
+use C2is\OTA\Model\HotelSearch\RateRangeData;
+use C2is\OTA\Model\HotelSearch\RoomTypeData;
 
 class HotelSearch extends AbstractResponse
 {
