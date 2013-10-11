@@ -50,21 +50,6 @@ class HotelSearch extends AbstractMessage
         $criteria = $dom->createElement('Criteria');
 
         if ($hotel = $this->getParam('hotel') and is_array($hotel)) {
-            $criterion = $dom->createElement('Criterion');
-            $hotelRef = $dom->createElement('HotelRef');
-            $hotelRef->setAttribute('ChainCode', $this->getParam('hotel.chain_code'));
-            if ($area = $this->getParam('hotel.area')) {
-                $hotelRef->setAttribute('AreaID', $area);
-            }
-            if ($name = $this->getParam('hotel.name')) {
-                $hotelRef->setAttribute('HotelName', $name);
-            }
-            if ($brand = $this->getParam('hotel.brand')) {
-                $hotelRef->setAttribute('BrandCode', $brand);
-                $hotelRef->setAttribute('BrandName', 'Pegasus');
-            }
-            $criterion->appendChild($hotelRef);
-            $criteria->appendChild($criterion);
 
             if ($codes = $this->getParam('hotel.codes')) {
                 foreach ($codes as $code) {
@@ -75,6 +60,22 @@ class HotelSearch extends AbstractMessage
                     $criterion->appendChild($hotelRef);
                     $criteria->appendChild($criterion);
                 }
+            } else {
+                $criterion = $dom->createElement('Criterion');
+                $hotelRef = $dom->createElement('HotelRef');
+                $hotelRef->setAttribute('ChainCode', $this->getParam('hotel.chain_code'));
+                if ($area = $this->getParam('hotel.area')) {
+                    $hotelRef->setAttribute('AreaID', $area);
+                }
+                if ($name = $this->getParam('hotel.name')) {
+                    $hotelRef->setAttribute('HotelName', $name);
+                }
+                if ($brand = $this->getParam('hotel.brand')) {
+                    $hotelRef->setAttribute('BrandCode', $brand);
+                    $hotelRef->setAttribute('BrandName', 'Pegasus');
+                }
+                $criterion->appendChild($hotelRef);
+                $criteria->appendChild($criterion);
             }
         }
 

@@ -87,7 +87,7 @@ class HotelAvail extends AbstractMessage
                 $roomStayCandidate  = $dom->createElement('RoomStayCandidate');
                 $roomStayCandidate->setAttribute('Quantity', $room['quantity']);
                 $guestCounts = $dom->createElement('GuestCounts');
-                foreach ($room as $guest) {
+                foreach ($room['guests'] as $guest) {
                     $guestCount = $dom->createElement('GuestCount');
                     $category   = isset($guest['category']) ? $guest['category']    : 10;
                     $count      = isset($guest['count'])    ? $guest['count']       : 1;
