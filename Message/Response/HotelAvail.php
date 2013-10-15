@@ -2,7 +2,14 @@
 
 namespace C2is\OTA\Message\Response;
 
+use C2is\OTA\Model\HotelAvail\RateData;
+use C2is\OTA\Model\HotelAvail\RoomRateData;
+use C2is\OTA\Model\HotelAvail\RoomTypeData;
+use C2is\OTA\Model\HotelAvail\TaxData;
+use C2is\OTA\Model\HotelAvail\AdditionalDetailData;
+use C2is\OTA\Model\HotelAvail\GuestCountData;
 use C2is\OTA\Model\HotelAvail\HotelAvailData;
+use C2is\OTA\Model\HotelAvail\RoomStayData;
 
 class HotelAvail extends AbstractResponse
 {
@@ -51,7 +58,7 @@ class HotelAvail extends AbstractResponse
             foreach ($xmlRoomStays as $xmlRoomStay) {
                 $roomStay = array();
 
-                if ($basicPropertyInfo = $xmlRoomStay->basicPropertyInfo) {
+                if ($basicPropertyInfo = $xmlRoomStay->BasicPropertyInfo) {
                     $roomStayAttributes = $basicPropertyInfo->attributes();
                     $roomStay['hotel'] = array();
                     $roomStay['hotel']['chain_code']    = (string) $roomStayAttributes['ChainCode'];
@@ -60,8 +67,8 @@ class HotelAvail extends AbstractResponse
 
                 if ($timeSpan = $xmlRoomStay->TimeSpan) {
                     $timeSpanAttributes = $xmlRoomStay->attributes();
-                    $roomRate['start_date'] = strtotime((string) $timeSpanAttributes['Start']);
-                    $roomRate['end_date']   = strtotime((string) $timeSpanAttributes['End']);
+                    $roomStay['start_date'] = strtotime((string) $timeSpanAttributes['Start']);
+                    $roomStay['end_date']   = strtotime((string) $timeSpanAttributes['End']);
                 }
 
                 if ($xmlRoomStay->RoomTypes) {
@@ -75,7 +82,7 @@ class HotelAvail extends AbstractResponse
                             $roomType['description'] = array();
                             foreach ($xmlRoomType->RoomDescription->Text as $xmlDescription) {
                                 $descriptionAttributes = $xmlDescription->attributes();
-                                $roomType['description'][$descriptionAttributes['Language']] = (string) $xmlDescription;
+                                $roomType['description'][(string) $descriptionAttributes['Language']] = (string) $xmlDescription;
                             }
                         }
 
@@ -89,7 +96,7 @@ class HotelAvail extends AbstractResponse
                                 $detail['description'] = array();
                                 foreach ($xmlDetail->DetailDescription->Text as $xmlDescription) {
                                     $descriptionAttributes = $xmlDescription->attributes();
-                                    $detail['description'][$descriptionAttributes['Language']] = (string) $xmlDescription;
+                                    $detail['description'][(string) $descriptionAttributes['Language']] = (string) $xmlDescription;
                                 }
                                 $roomType['details'][] = $detail;
                             }
@@ -112,11 +119,14 @@ class HotelAvail extends AbstractResponse
                         $roomRate['plan']['category']   = (string) $roomRateAttributes['RatePlanCategory'];
 
                         $roomRate['description'] = array();
-                        foreach ($xmlRoomRate->RoomRateDescription->Text as $xmlDescription) {
-                            $descriptionAttributes = $xmlDescription->attributes();
-                            $rate['description'][$descriptionAttributes['Language']] = (string) $xmlDescription;
+                        if ($xmlRoomRate->RoomRateDescription->Text) {
+                            foreach ($xmlRoomRate->RoomRateDescription->Text as $xmlDescription) {
+                                $descriptionAttributes = $xmlDescription->attributes();
+                                $rate['description'][(string) $descriptionAttributes['Language']] = (string) $xmlDescription;
+                            }
                         }
 
+                        $roomRate['rates'] = array();
                         foreach ($xmlRoomRate->Rates->Rate as $xmlRate) {
                             $rate = array();
                             $rateAttributes = $xmlRate->attributes();
@@ -173,10 +183,12 @@ class HotelAvail extends AbstractResponse
                                         $rate['free_night']['percentage']   = (string) $specialRateAttributes['FreePercent'];
                                     }
                                     if ($specialRateInfo->GridPricingType) {
-                                        $rate['fix_percentage_pricing'] = (string) $specialRateInfo->GridPricingType;
+                                        $rate['grid_pricing'] = (string) $specialRateInfo->GridPricingType;
                                     }
                                 }
                             }
+
+                            $roomRate['rates'][] = $rate;
                         }
 
                         $roomStay['room_rates'][] = $roomRate;
@@ -191,6 +203,7 @@ class HotelAvail extends AbstractResponse
                     foreach ($xmlRoomStay->GuestCounts->GuestCount as $xmlGuestCount) {
                         $guestCountAttributes = $xmlGuestCount->attributes();
                         $roomStay['guests']['counts'][] = array(
+                            'age'       => (string) $guestCountAttributes['Age'],
                             'age_code'  => (string) $guestCountAttributes['AgeQualifyingCode'],
                             'count'     => (string) $guestCountAttributes['Count'],
                         );
@@ -218,7 +231,7 @@ class HotelAvail extends AbstractResponse
                             $tax['description'] = array();
                             foreach ($xmlTax->TaxDescription->Text as $xmlDescription) {
                                 $descriptionAttributes = $xmlDescription->attributes();
-                                $roomType['description'][$descriptionAttributes['Language']] = (string) $xmlDescription;
+                                $roomType['description'][(string) $descriptionAttributes['Language']] = (string) $xmlDescription;
                             }
                         }
                     }
@@ -239,37 +252,122 @@ class HotelAvail extends AbstractResponse
 
     public function getData()
     {
-        $data = array();
+        $data = new HotelAvailData();
 
-        foreach ($this->getParam('hotels', array()) as $hotel) {
-            $hotelSearch = new HotelSearchData();
-            $hotelSearch->chainCode = $hotel['chain_code'];
-            $hotelSearch->hotelCode = $hotel['code'];
+        foreach ($this->getParam('room_stays', array()) as $roomStay) {
+            $roomStayData = new RoomStayData();
+            $roomStayData->chainCode = $roomStay['hotel']['chain_code'];
+            $roomStayData->hotelCode = $roomStay['hotel']['code'];
 
-            if ($hotel['rate_range']) {
-                $rateRange = new RateRangeData();
-                $rateRange->currencyCode = $hotel['rate_range']['currency'];
-                $rateRange->maxRate = $hotel['rate_range']['max_rate'];
-                $rateRange->minRate = $hotel['rate_range']['min_rate'];
+            foreach ($roomStay['room_types'] as $roomType) {
+                $roomTypeData = new RoomTypeData();
 
-                if ($hotel['rate_range']['room_type_min']) {
-                    $rateRange->roomTypeMin = new RoomTypeData();
-                    $rateRange->roomTypeMin->roomTypeCode = $hotel['rate_range']['room_type_min']['code'];
-                    $rateRange->roomTypeMin->roomTypeCodeContext = $hotel['rate_range']['room_type_min']['context'];
-                    $rateRange->roomTypeMin->roomTypeLabel = $hotel['rate_range']['room_type_min']['labels'];
+                $roomTypeData->code = $roomType['code'];
+                $roomTypeData->description = $roomType['description'];
+
+                if (isset($roomType['details'])) {
+                    foreach ($roomType['details'] as $detail) {
+                        $detailData = new AdditionalDetailData();
+
+                        $detailData->detailType = $detail['type'];
+                        $detailData->detailDescription = $detail['description'];
+
+                        $roomTypeData->details[] = $detailData;
+                    }
                 }
 
-                if ($hotel['rate_range']['room_type_max']) {
-                    $rateRange->roomTypeMax = new RoomTypeData();
-                    $rateRange->roomTypeMax->roomTypeCode = $hotel['rate_range']['room_type_max']['code'];
-                    $rateRange->roomTypeMax->roomTypeCodeContext = $hotel['rate_range']['room_type_max']['context'];
-                    $rateRange->roomTypeMax->roomTypeLabel = $hotel['rate_range']['room_type_max']['labels'];
-                }
-
-                $hotelSearch->rateRange = $rateRange;
+                $roomStayData->roomTypes[] = $roomTypeData;
             }
 
-            $data[] = $hotelSearch;
+            foreach ($roomStay['room_rates'] as $roomRate) {
+                $roomRateData = new RoomRateData();
+
+                $roomRateData->planCode         = $roomRate['plan']['code'];
+                $roomRateData->planCategory     = $roomRate['plan']['category'];
+                $roomRateData->effectiveDate    = $roomRate['effective_date'];
+                $roomRateData->expireDate       = $roomRate['expire_date'];
+                $roomRateData->numberOfUnits    = $roomRate['number_units'];
+                $roomRateData->description      = $roomRate['description'];
+
+                foreach ($roomRate['rates'] as $rate) {
+                    $rateData = new RateData();
+
+                    $rateData->effectiveDate    = $rate['effective_date'];
+                    $rateData->expireDate       = $rate['expire_date'];
+                    $rateData->timeUnit         = $rate['time_unit'];
+                    $rateData->unitMultiplier   = $rate['unit_multiplier'];
+                    $rateData->amountBeforeTax  = $rate['amount']['before_tax'];
+                    $rateData->amountAfterTax   = $rate['amount']['after_tax'];
+                    $rateData->currencyCode     = $rate['amount']['currency'];
+                    $rateData->isLastMinute     = !empty($rate['last_minute']);
+                    if ($rateData->isLastMinute) {
+                        $rateData->firstDay  = $rate['last_minute'];
+                    }
+                    $rateData->isEarlyBooking = !empty($rate['early_booking']);
+                    if ($rateData->isEarlyBooking) {
+                        $rateData->lastDay = $rate['early_booking'];
+                    }
+                    if (!empty($rate['promotion'])) {
+                        $rateData->promotion = $rate['promotion'];
+                    }
+                    if (!empty($rate['special'])) {
+                        $rateData->special = $rate['special'];
+                    }
+                    $rateData->hasFixAmountPricing = !empty($rate['fix_amount_pricing']['amount']);
+                    if ($rateData->hasFixAmountPricing) {
+                        $rateData->fixAmount            = $rate['fix_amount_pricing']['amount'];
+                        $rateData->fixAmountCurrency    = $rate['fix_amount_pricing']['currency'];
+                    }
+                    $rateData->hasFixPercentagePricing = !empty($rate['fix_percentage_pricing']);
+                    if ($rateData->hasFixPercentagePricing) {
+                        $rateData->fixPercentage = $rate['fix_percentage_pricing'];
+                    }
+                    $rateData->hasFreeNights = !empty($rate['free_night']['nb_nights']);
+                    if ($rateData->hasFreeNights) {
+                        $rateData->nbFreeNights             = $rate['free_night']['nb_nights'];
+                        $rateData->nbMinNights              = $rate['free_night']['min_nights'];
+                        $rateData->freeNightsType           = $rate['free_night']['type'];
+                        $rateData->freeNightsApplication    = $rate['free_night']['application'];
+                        $rateData->freeNightsPercentage     = $rate['free_night']['percentage'];
+                    }
+                    $rateData->hasGridPricing           = !empty($rate['grid_pricing']);
+                    $rateData->cancelPolicyIdentifier   = $rate['cancel_policy_identifier'];
+
+                    $roomRateData->rates[] = $rateData;
+                }
+
+                $roomStayData->roomRates[] = $roomRateData;
+            }
+
+            $roomStayData->guestCountPerRoom = $roomStay['guests']['per_room'];
+            foreach ($roomStay['guests']['counts'] as $guestCount) {
+                $guestCountData = new GuestCountData();
+
+                $guestCountData->age                = $guestCount['age'];
+                $guestCountData->ageQualifyingCode  = $guestCount['age_code'];
+                $guestCountData->count              = $guestCount['count'];
+
+                $roomStayData->guestCounts[] = $guestCountData;
+            }
+
+            $roomStayData->timeStart            = $roomStay['start_date'];
+            $roomStayData->timeEnd              = $roomStay['end_date'];
+            $roomStayData->totalBeforeTax       = $roomStay['amount']['before_tax'];
+            $roomStayData->totalAfterTax        = $roomStay['amount']['after_tax'];
+            $roomStayData->currencyCode         = $roomStay['amount']['currency'];
+            $roomStayData->taxesAmount          = $roomStay['tax']['amount'];
+            $roomStayData->taxesCurrencyCode    = $roomStay['tax']['currency'];
+
+            foreach ($roomStay['taxes'] as $tax) {
+                $taxData = new TaxData();
+
+                $taxData->percent       = $tax['percent'];
+                $taxData->description   = $tax['description'];
+
+                $roomStayData->taxes[] = $taxData;
+            }
+
+            $data->stays[] = $roomStayData;
         }
 
         return $data;

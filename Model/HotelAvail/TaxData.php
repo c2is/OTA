@@ -1,6 +1,6 @@
 <?php
 
-namespace C2is\Bundle\OtaBundle\Model\HotelAvail;
+namespace C2is\OTA\Model\HotelAvail;
 
 class TaxData
 {

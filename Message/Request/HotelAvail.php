@@ -45,7 +45,7 @@ class HotelAvail extends AbstractMessage
         $root->setAttribute('xmlns'         , $this->getParam('ota.namespace'));
         $root->setAttribute('MaxResponses'  , $this->getParam('max_responses', 100));
         $root->setAttribute('BestOnly'      , $this->getParam('best_only', 'false'));
-        $root->setAttribute('RateRangeOnly' , $rateRangeOnly = $this->getParam('rate_range_only', 'true'));
+        $root->setAttribute('RateRangeOnly' , $rateRangeOnly = $this->getParam('rate_range_only', 'false'));
         $root->setAttribute('SummaryOnly'   , $this->getParam('summary_only', 'false'));
         $dom->appendChild($root);
 

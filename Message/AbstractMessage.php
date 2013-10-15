@@ -121,4 +121,14 @@ abstract class AbstractMessage extends Parametrable
         $this->generated = false;
         return parent::setParams($params);
     }
+
+    protected function getTranslatedValue($xmlNode) {
+        $translatedValue = array();
+        foreach ($xmlNode as $translationNode) {
+            $translationAttributes = $translationNode->attributes();
+            $translatedValue[(string) $translationAttributes['Language']] = (string) $translationNode;
+        }
+
+        return $translatedValue;
+    }
 }
