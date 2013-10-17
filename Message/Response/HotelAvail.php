@@ -284,17 +284,17 @@ class HotelAvail extends AbstractResponse
                         $occupancy = array();
                         $occupancyAttributes = $xmlOccupancy->attributes();
 
-                        $occupancy['base']          = $occupancyAttributes['Base'];
-                        $occupancy['free_children'] = $occupancyAttributes['FreeChildren'];
-                        $occupancy['free_infants']  = $occupancyAttributes['FreeInfants'];
-                        $occupancy['free_juniors']  = $occupancyAttributes['FreeJuniors'];
-                        $occupancy['min']           = $occupancyAttributes['Min'];
-                        $occupancy['max']           = $occupancyAttributes['Max'];
-                        $occupancy['max_adults']    = $occupancyAttributes['MaxAdults'];
-                        $occupancy['max_children']  = $occupancyAttributes['MaxChildren'];
-                        $occupancy['max_infants']   = $occupancyAttributes['MaxInfants'];
-                        $occupancy['max_juniors']   = $occupancyAttributes['MaxJuniors'];
-                        $occupancy['max_seniors']   = $occupancyAttributes['MaxSeniors'];
+                        $occupancy['base']          = (string) $occupancyAttributes['Base'];
+                        $occupancy['free_children'] = (string) $occupancyAttributes['FreeChildren'];
+                        $occupancy['free_infants']  = (string) $occupancyAttributes['FreeInfants'];
+                        $occupancy['free_juniors']  = (string) $occupancyAttributes['FreeJuniors'];
+                        $occupancy['min']           = (string) $occupancyAttributes['Min'];
+                        $occupancy['max']           = (string) $occupancyAttributes['Max'];
+                        $occupancy['max_adults']    = (string) $occupancyAttributes['MaxAdults'];
+                        $occupancy['max_children']  = (string) $occupancyAttributes['MaxChildren'];
+                        $occupancy['max_infants']   = (string) $occupancyAttributes['MaxInfants'];
+                        $occupancy['max_juniors']   = (string) $occupancyAttributes['MaxJuniors'];
+                        $occupancy['max_seniors']   = (string) $occupancyAttributes['MaxSeniors'];
 
                         $occupancy['guest_counts'] = array();
                         if ($xmlOccupancy->GuestCounts) {
@@ -302,9 +302,9 @@ class HotelAvail extends AbstractResponse
                                 $guestCount = array();
                                 $guestCountAttributes = $xmlGuestCount->attributes();
 
-                                $guestCount['age']      = $guestCountAttributes['Age'];
-                                $guestCount['age_code'] = $guestCountAttributes['AgeQualifyingCode'];
-                                $guestCount['count']    = $guestCountAttributes['Count'];
+                                $guestCount['age']      = (string) $guestCountAttributes['Age'];
+                                $guestCount['age_code'] = (string) $guestCountAttributes['AgeQualifyingCode'];
+                                $guestCount['count']    = (string) $guestCountAttributes['Count'];
 
                                 $occupancy['guest_counts'][] = $guestCount;
                             }
@@ -322,9 +322,9 @@ class HotelAvail extends AbstractResponse
                 $cancelPolicy = array();
                 $cancelPolicyAttributes = $xmlCancelPolicy->attributes();
 
-                $cancelPolicy['id']             = $cancelPolicyAttributes['RPH'];
-                $cancelPolicy['cancellable']    = $cancelPolicyAttributes['CancellableBooking'];
-                $cancelPolicy['editable']       = $cancelPolicyAttributes['EditableBooking'];
+                $cancelPolicy['id']             = (string) $cancelPolicyAttributes['RPH'];
+                $cancelPolicy['cancellable']    = (string) $cancelPolicyAttributes['CancellableBooking'];
+                $cancelPolicy['editable']       = (string) $cancelPolicyAttributes['EditableBooking'];
                 $cancelPolicy['booking_policy'] = $this->getTranslatedValue($xmlCancelPolicy->BookingPolicy->Text);
                 $cancelPolicy['cancel_policy']  = $this->getTranslatedValue($xmlCancelPolicy->CancelPolicy->Text);
 
@@ -489,7 +489,6 @@ class HotelAvail extends AbstractResponse
                 }
             }
             $roomStayData->occupancy = $occupancy;
-
             $data->stays[] = $roomStayData;
         }
 
@@ -502,7 +501,7 @@ class HotelAvail extends AbstractResponse
             $cancelPolicyData->cancelPolicy             = $cancelPolicy['cancel_policy'];
             $cancelPolicyData->bookingPolicy            = $cancelPolicy['booking_policy'];
 
-            $data->cancelPolicies[] = $cancelPolicyData;
+            $data->cancelPolicies[$cancelPolicyData->cancelPolicyIdentifier] = $cancelPolicyData;
         }
 
         return $data;
