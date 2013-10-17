@@ -57,8 +57,8 @@ class RoomRateData
         );
 
         foreach ($this->rates as $rate) {
-            $total['before_tax']    += $rate->amountBeforeTax;
-            $total['after_tax']     += $rate->amountAfterTax;
+            $total['before_tax']    += ($rate->amountBeforeTax * $rate->unitMultiplier);
+            $total['after_tax']     += ($rate->amountAfterTax  * $rate->unitMultiplier);
             $total['currency']       = $rate->currencyCode;
         }
 
