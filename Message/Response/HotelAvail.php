@@ -2,9 +2,12 @@
 
 namespace C2is\OTA\Message\Response;
 
+use C2is\OTA\Model\HotelAvail\CancelPolicyData;
+use C2is\OTA\Model\HotelAvail\OccupancyData;
 use C2is\OTA\Model\HotelAvail\RateData;
 use C2is\OTA\Model\HotelAvail\RoomRateData;
 use C2is\OTA\Model\HotelAvail\RoomTypeData;
+use C2is\OTA\Model\HotelAvail\ServiceData;
 use C2is\OTA\Model\HotelAvail\TaxData;
 use C2is\OTA\Model\HotelAvail\AdditionalDetailData;
 use C2is\OTA\Model\HotelAvail\GuestCountData;
@@ -237,13 +240,95 @@ class HotelAvail extends AbstractResponse
                     }
                 }
 
+                $roomStay['services'] = array();
                 if ($xmlExtensions = $xmlRoomStay->TPA_Extensions) {
                     if ($xmlExtensions->Services) {
+                        foreach ($xmlExtensions->Services->Service as $xmlService) {
+                            $service = array();
+                            $serviceAttributes = $xmlService->attributes();
 
+                            $service['inclusive']       = (string) $serviceAttributes['Inclusive'];
+                            $service['mandatory']       = (string) $serviceAttributes['Mandatory'];
+                            $service['night_requested'] = (string) $serviceAttributes['NightRequested'];
+                            $service['pax_requested']   = (string) $serviceAttributes['PaxRequested'];
+                            $service['inventory_code']  = (string) $serviceAttributes['ServiceInventoryCode'];
+                            $service['pricing_type']    = (string) $serviceAttributes['ServicePricingType'];
+
+                            if ($xmlService->Price->Base) {
+                                $priceAttributes = $xmlService->Price->Base->attributes();
+                                $service['amount'] = array();
+                                $service['amount']['before_tax']    = (string) $priceAttributes['AmountBeforeTax'];
+                                $service['amount']['after_tax']     = (string) $priceAttributes['AmountAfterTax'];
+                                $service['amount']['currency']      = (string) $priceAttributes['CurrencyCode'];
+                            }
+
+                            $service['description'] = $this->getTranslatedValue($xmlService->Description);
+
+                            if ($xmlService->Details) {
+                                $detailAttributes = $xmlService->Details->attributes();
+                                $service['adult']           = (string) $detailAttributes['Adult'];
+                                $service['child']           = (string) $detailAttributes['Child'];
+                                $service['infant']          = (string) $detailAttributes['Infant'];
+                                $service['junior']          = (string) $detailAttributes['Junior'];
+                                $service['min_pax']         = (string) $detailAttributes['MinPax'];
+                                $service['price_per_night'] = (string) $detailAttributes['PricePerNight'];
+                                $service['price_per_pax']   = (string) $detailAttributes['PricePerPax'];
+                                $service['senior']          = (string) $detailAttributes['Senior'];
+                            }
+
+                            $roomStay['services'][] = $service;
+                        }
+                    }
+
+                    if ($xmlOccupancy = $xmlExtensions->Occupancy) {
+                        $occupancy = array();
+                        $occupancyAttributes = $xmlOccupancy->attributes();
+
+                        $occupancy['base']          = $occupancyAttributes['Base'];
+                        $occupancy['free_children'] = $occupancyAttributes['FreeChildren'];
+                        $occupancy['free_infants']  = $occupancyAttributes['FreeInfants'];
+                        $occupancy['free_juniors']  = $occupancyAttributes['FreeJuniors'];
+                        $occupancy['min']           = $occupancyAttributes['Min'];
+                        $occupancy['max']           = $occupancyAttributes['Max'];
+                        $occupancy['max_adults']    = $occupancyAttributes['MaxAdults'];
+                        $occupancy['max_children']  = $occupancyAttributes['MaxChildren'];
+                        $occupancy['max_infants']   = $occupancyAttributes['MaxInfants'];
+                        $occupancy['max_juniors']   = $occupancyAttributes['MaxJuniors'];
+                        $occupancy['max_seniors']   = $occupancyAttributes['MaxSeniors'];
+
+                        $occupancy['guest_counts'] = array();
+                        if ($xmlOccupancy->GuestCounts) {
+                            foreach ($xmlOccupancy->GuestCounts->GuestCount as $xmlGuestCount) {
+                                $guestCount = array();
+                                $guestCountAttributes = $xmlGuestCount->attributes();
+
+                                $guestCount['age']      = $guestCountAttributes['Age'];
+                                $guestCount['age_code'] = $guestCountAttributes['AgeQualifyingCode'];
+                                $guestCount['count']    = $guestCountAttributes['Count'];
+
+                                $occupancy['guest_counts'][] = $guestCount;
+                            }
+                        }
+
+                        $roomStay['occupancy'] = $occupancy;
                     }
                 }
-
                 $this->params['room_stays'][] = $roomStay;
+            }
+        }
+
+        if ($xml->TPA_Extensions and ($xmlCancelPolicies = $xml->TPA_Extensions->BookingCancelPolicies)) {
+            foreach ($xmlCancelPolicies->BookingCancelPolicy as $xmlCancelPolicy) {
+                $cancelPolicy = array();
+                $cancelPolicyAttributes = $xmlCancelPolicy->attributes();
+
+                $cancelPolicy['id']             = $cancelPolicyAttributes['RPH'];
+                $cancelPolicy['cancellable']    = $cancelPolicyAttributes['CancellableBooking'];
+                $cancelPolicy['editable']       = $cancelPolicyAttributes['EditableBooking'];
+                $cancelPolicy['booking_policy'] = $this->getTranslatedValue($xmlCancelPolicy->BookingPolicy->Text);
+                $cancelPolicy['cancel_policy']  = $this->getTranslatedValue($xmlCancelPolicy->CancelPolicy->Text);
+
+                $this->params['cancel_policies'][] = $cancelPolicy;
             }
         }
 
@@ -367,7 +452,57 @@ class HotelAvail extends AbstractResponse
                 $roomStayData->taxes[] = $taxData;
             }
 
+            foreach ($roomStay['services'] as $service) {
+                $serviceData = new ServiceData();
+
+                $serviceData->adult     = !(empty($service['adult'])    or $service['adult']    == 'false');
+                $serviceData->child     = !(empty($service['child'])    or $service['child']    == 'false');
+                $serviceData->infant    = !(empty($service['infant'])   or $service['infant']   == 'false');
+                $serviceData->junior    = !(empty($service['junior'])   or $service['junior']   == 'false');
+                $serviceData->senior    = !(empty($service['senior'])   or $service['senior']   == 'false');
+
+                $roomStayData->services[] = $serviceData;
+            }
+
+            $occupancyData = new OccupancyData();
+            if ($occupancy = $roomStay['occupancy']) {
+                $occupancyData->base            = $occupancy['base'];
+                $occupancyData->min             = $occupancy['min'];
+                $occupancyData->max             = $occupancy['max'];
+                $occupancyData->freeChildren    = $occupancy['free_children'];
+                $occupancyData->freeInfants     = $occupancy['free_infants'];
+                $occupancyData->freeJuniors     = $occupancy['free_juniors'];
+                $occupancyData->maxAdults       = $occupancy['max_adults'];
+                $occupancyData->maxChildren     = $occupancy['max_children'];
+                $occupancyData->maxInfants      = $occupancy['max_infants'];
+                $occupancyData->maxJuniors      = $occupancy['max_juniors'];
+                $occupancyData->maxSeniors      = $occupancy['max_seniors'];
+
+                foreach ($occupancy['guest_counts'] as $guestCount) {
+                    $guestCountData = new GuestCountData();
+
+                    $guestCountData->age = $guestCount['age'];
+                    $guestCountData->ageQualifyingCode = $guestCount['age_code'];
+                    $guestCountData->count = $guestCount['count'];
+
+                    $occupancyData->guestCount[] = $guestCountData;
+                }
+            }
+            $roomStayData->occupancy = $occupancy;
+
             $data->stays[] = $roomStayData;
+        }
+
+        foreach ($this->getParam('cancel_policies', array()) as $cancelPolicy) {
+            $cancelPolicyData = new CancelPolicyData();
+
+            $cancelPolicyData->cancelPolicyIdentifier   = $cancelPolicy['id'];
+            $cancelPolicyData->cancelableBooking        = $cancelPolicy['cancellable'];
+            $cancelPolicyData->editableBooking          = $cancelPolicy['editable'];
+            $cancelPolicyData->cancelPolicy             = $cancelPolicy['cancel_policy'];
+            $cancelPolicyData->bookingPolicy            = $cancelPolicy['booking_policy'];
+
+            $data->cancelPolicies[] = $cancelPolicyData;
         }
 
         return $data;

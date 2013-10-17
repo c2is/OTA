@@ -88,7 +88,7 @@ class RoomStayData
     public $services = array();
 
     /**
-     * @var array The list of guest counts.
+     * @var array The room occupancy.
      */
-    public $occupancy = array();
+    public $occupancy;
 }

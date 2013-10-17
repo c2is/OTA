@@ -44,4 +44,24 @@ class RoomRateData
      * @var array The list of rates for this room.
      */
     public $rates = array();
+
+    /**
+     * @return array The total amount of this room's stay. The array contains both before tax and after tax values.
+     */
+    public function getTotalAmount()
+    {
+        $total = array(
+            'before_tax' => 0,
+            'after_tax' => 0,
+            'currency' => 'EUR',
+        );
+
+        foreach ($this->rates as $rate) {
+            $total['before_tax']    += $rate->amountBeforeTax;
+            $total['after_tax']     += $rate->amountAfterTax;
+            $total['currency']       = $rate->currencyCode;
+        }
+
+        return $total;
+    }
 }
