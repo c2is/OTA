@@ -24,4 +24,15 @@ class RoomTypeData
      * @var array The list of additional details for this room type
      */
     public $details = array();
+
+    /**
+     * @var string Small thumbnail URL if exists.
+     */
+    public $smallThumbnail;
+
+
+    /**
+     * @var string Big thumbnail URL if exists.
+     */
+    public $bigThumbnail;
 }

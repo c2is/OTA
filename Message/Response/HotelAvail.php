@@ -9,7 +9,6 @@ use C2is\OTA\Model\HotelAvail\RoomRateData;
 use C2is\OTA\Model\HotelAvail\RoomTypeData;
 use C2is\OTA\Model\HotelAvail\ServiceData;
 use C2is\OTA\Model\HotelAvail\TaxData;
-use C2is\OTA\Model\HotelAvail\AdditionalDetailData;
 use C2is\OTA\Model\HotelAvail\GuestCountData;
 use C2is\OTA\Model\HotelAvail\HotelAvailData;
 use C2is\OTA\Model\HotelAvail\RoomStayData;
@@ -90,18 +89,14 @@ class HotelAvail extends AbstractResponse
                         }
 
                         if ($xmlRoomType->AdditionalDetails) {
-                            $roomType['details'] = array();
-                            foreach ($xmlRoomType->additionalDetails->AdditionalDetail as $xmlDetail) {
-                                $detail = array();
-                                $detailAttributes = $xmlDetail->attributes();
-                                $detail['type'] = (string) $detailAttributes['Type'];
+                            foreach ($xmlRoomType->AdditionalDetails->AdditionalDetail as $xmlDetail) {
+                                $type = (string) $xmlDetail->DetailDescription->Text;
 
-                                $detail['description'] = array();
-                                foreach ($xmlDetail->DetailDescription->Text as $xmlDescription) {
-                                    $descriptionAttributes = $xmlDescription->attributes();
-                                    $detail['description'][(string) $descriptionAttributes['Language']] = (string) $xmlDescription;
+                                if ('BIG' == $type) {
+                                    $roomType['big_thumbnail'] = (string) $xmlDetail->DetailDescription->URL;
+                                } elseif ('SMALL' == $type) {
+                                    $roomType['small_thumbnail'] = (string) $xmlDetail->DetailDescription->URL;
                                 }
-                                $roomType['details'][] = $detail;
                             }
                         }
                         $roomStay['room_types'][] = $roomType;
@@ -350,15 +345,11 @@ class HotelAvail extends AbstractResponse
                 $roomTypeData->code = $roomType['code'];
                 $roomTypeData->description = $roomType['description'];
 
-                if (isset($roomType['details'])) {
-                    foreach ($roomType['details'] as $detail) {
-                        $detailData = new AdditionalDetailData();
-
-                        $detailData->detailType = $detail['type'];
-                        $detailData->detailDescription = $detail['description'];
-
-                        $roomTypeData->details[] = $detailData;
-                    }
+                if (isset($roomType['big_thumbnail'])) {
+                    $roomTypeData->bigThumbnail = $roomType['big_thumbnail'];
+                }
+                if (isset($roomType['small_thumbnail'])) {
+                    $roomTypeData->smallThumbnail = $roomType['small_thumbnail'];
                 }
 
                 $roomStayData->roomTypes[] = $roomTypeData;
