@@ -12,5 +12,8 @@
         "psr-0": { "C2is\\OTA": "" }
     },
     "target-dir": "C2is/OTA",
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "require": {
+        "jms/serializer": "dev-master"
+    }
 }
