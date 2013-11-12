@@ -3,6 +3,7 @@
 namespace C2is\OTA\Message\Request;
 
 use C2is\OTA\Message\AbstractMessage;
+use JMS\Serializer\SerializerBuilder;
 
 /**
  * Class HotelSearch

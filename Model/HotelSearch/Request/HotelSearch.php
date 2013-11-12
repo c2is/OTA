@@ -7,8 +7,8 @@ use JMS\Serializer\Annotation\XmlAttribute;
 use JMS\Serializer\Annotation\SerializedName;
 use JMS\Serializer\Annotation\XmlRoot;
 
-/** @XmlRoot("Ota_HotelSearchRQ") */
-class OTA_HotelSearchRQ
+/** @XmlRoot("OTA_HotelSearchRQ") */
+class HotelSearch
 {
     /**
      * @SerializedName("EchoToken")
@@ -29,7 +29,7 @@ class OTA_HotelSearchRQ
      * @XmlAttribute
      * @Type("string")
      */
-    private $target;
+    private $target = 'Test';
 
     /**
      * @SerializedName("TimeStamp")
@@ -54,22 +54,43 @@ class OTA_HotelSearchRQ
 
     /**
      * @SerializedName("POS")
-     * @Type("string")
+     * @Type("C2is\OTA\Model\HotelSearch\Request\Pos")
+     * @var Pos
      */
     private $pos;
 
     /**
      * @SerializedName("Criteria")
-     * @Type("string")
+     * @Type("C2is\OTA\Model\HotelSearch\Request\Criteria")
+     * @var Criteria
      */
     private $criteria;
 
     /**
+     * @SerializedName("MaxResponses")
+     * @XmlAttribute
+     * @Type("string")
+     */
+    private $maxResponses = 100;
+
+    /**
+     * Constructor.
+     */
+    public function __construct()
+    {
+        $this->pos = new Pos();
+        $this->criteria = new Criteria();
+    }
+
+    /**
      * @param $echoToken
+     * @return $this
      */
     public function setEchoToken($echoToken)
     {
         $this->echoToken = $echoToken;
+
+        return $this;
     }
 
     /**
@@ -82,10 +103,13 @@ class OTA_HotelSearchRQ
 
     /**
      * @param $lang
+     * @return $this
      */
     public function setLang($lang)
     {
         $this->lang = $lang;
+
+        return $this;
     }
 
     /**
@@ -98,10 +122,13 @@ class OTA_HotelSearchRQ
 
     /**
      * @param $target
+     * @return $this
      */
     public function setTarget($target)
     {
         $this->target = $target;
+
+        return $this;
     }
 
     /**
@@ -114,10 +141,13 @@ class OTA_HotelSearchRQ
 
     /**
      * @param $timestamp
+     * @return $this
      */
     public function setTimestamp($timestamp)
     {
         $this->timestamp = $timestamp;
+
+        return $this;
     }
 
     /**
@@ -130,10 +160,13 @@ class OTA_HotelSearchRQ
 
     /**
      * @param $version
+     * @return $this
      */
     public function setVersion($version)
     {
         $this->version = $version;
+
+        return $this;
     }
 
     /**
@@ -146,10 +179,13 @@ class OTA_HotelSearchRQ
 
     /**
      * @param $xmlns
+     * @return $this
      */
     public function setXmlns($xmlns)
     {
         $this->xmlns = $xmlns;
+
+        return $this;
     }
 
     /**
@@ -161,15 +197,18 @@ class OTA_HotelSearchRQ
     }
 
     /**
-     * @param $pos
+     * @param Pos $pos
+     * @return $this
      */
-    public function setPos($pos)
+    public function setPos(Pos $pos)
     {
         $this->pos = $pos;
+
+        return $this;
     }
 
     /**
-     * @return mixed
+     * @return Pos
      */
     public function getPos()
     {
@@ -177,18 +216,73 @@ class OTA_HotelSearchRQ
     }
 
     /**
-     * @param $criteria
+     * @param Criteria $criteria
+     * @return $this
      */
-    public function setCriteria($criteria)
+    public function setCriteria(Criteria $criteria)
     {
         $this->criteria = $criteria;
+
+        return $this;
     }
 
     /**
-     * @return mixed
+     * @return Criteria
      */
     public function getCriteria()
     {
         return $this->criteria;
+    }
+
+    /**
+     * @param $maxResponses
+     * @return $this
+     */
+    public function setMaxResponses($maxResponses)
+    {
+        $this->maxResponses = $maxResponses;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMaxResponses()
+    {
+        return $this->maxResponses;
+    }
+
+    /**
+     * @param $requestorId
+     * @return $this
+     */
+    public function setRequestorId($requestorId)
+    {
+        $this->pos->getSource()->getRequestorId()->setId($requestorId);
+
+        return $this;
+    }
+
+    /**
+     * @param $requestorType
+     * @return $this
+     */
+    public function setRequestorType($requestorType)
+    {
+        $this->pos->getSource()->getRequestorId()->setType($requestorType);
+
+        return $this;
+    }
+
+    /**
+     * @param $companyName
+     * @return $this
+     */
+    public function setCompanyName($companyName)
+    {
+        $this->pos->getSource()->getRequestorId()->setCompanyName($companyName);
+
+        return $this;
     }
 }
