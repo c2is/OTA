@@ -1,15 +1,16 @@
 <?php
 
-namespace C2is\OTA\Model\HotelSearch\Request;
+namespace C2is\OTA\Model\HotelAvail\Request;
 
 use C2is\OTA\Model\Common\Pos;
 use JMS\Serializer\Annotation\Type;
 use JMS\Serializer\Annotation\XmlAttribute;
+use JMS\Serializer\Annotation\XmlList;
 use JMS\Serializer\Annotation\SerializedName;
 use JMS\Serializer\Annotation\XmlRoot;
 
-/** @XmlRoot("OTA_HotelSearchRQ") */
-class HotelSearch
+/** @XmlRoot("OTA_HotelAvailRQ") */
+class HotelAvail
 {
     /**
      * @SerializedName("EchoToken")
@@ -23,7 +24,7 @@ class HotelSearch
      * @XmlAttribute
      * @Type("string")
      */
-    private $lang;
+    private $lang = 'en';
 
     /**
      * @SerializedName("Target")
@@ -54,6 +55,27 @@ class HotelSearch
     private $xmlns;
 
     /**
+     * @SerializedName("BestOnly")
+     * @XmlAttribute
+     * @Type("boolean")
+     */
+    private $bestOnly;
+
+    /**
+     * @SerializedName("RateRangeOnly")
+     * @XmlAttribute
+     * @Type("boolean")
+     */
+    private $rateRangeOnly;
+
+    /**
+     * @SerializedName("SummaryOnly")
+     * @XmlAttribute
+     * @Type("boolean")
+     */
+    private $summaryOnly;
+
+    /**
      * @SerializedName("POS")
      * @Type("C2is\OTA\Model\Common\Pos")
      * @var Pos
@@ -61,18 +83,12 @@ class HotelSearch
     private $pos;
 
     /**
-     * @SerializedName("Criteria")
-     * @Type("C2is\OTA\Model\HotelSearch\Request\Criteria")
-     * @var Criteria
+     * @SerializedName("AvailRequestSegments")
+     * @XmlList(inline=false, entry="AvailRequestSegment")
+     * @Type("array<C2is\OTA\Model\HotelAvail\Request\AvailRequestSegment>")
+     * @var array
      */
-    private $criteria;
-
-    /**
-     * @SerializedName("MaxResponses")
-     * @XmlAttribute
-     * @Type("string")
-     */
-    private $maxResponses = 100;
+    private $availRequestSegments = array();
 
     /**
      * Constructor.
@@ -80,7 +96,6 @@ class HotelSearch
     public function __construct()
     {
         $this->pos = new Pos();
-        $this->criteria = new Criteria();
     }
 
     /**
@@ -197,6 +212,36 @@ class HotelSearch
         return $this->xmlns;
     }
 
+    public function setBestOnly($bestOnly)
+    {
+        $this->bestOnly = $bestOnly;
+    }
+
+    public function getBestOnly()
+    {
+        return $this->bestOnly;
+    }
+
+    public function setRateRangeOnly($rateRangeOnly)
+    {
+        $this->rateRangeOnly = $rateRangeOnly;
+    }
+
+    public function getRateRangeOnly()
+    {
+        return $this->rateRangeOnly;
+    }
+
+    public function setSummaryOnly($summaryOnly)
+    {
+        $this->summaryOnly = $summaryOnly;
+    }
+
+    public function getSummaryOnly()
+    {
+        return $this->summaryOnly;
+    }
+
     /**
      * @param Pos $pos
      * @return $this
@@ -214,44 +259,6 @@ class HotelSearch
     public function getPos()
     {
         return $this->pos;
-    }
-
-    /**
-     * @param Criteria $criteria
-     * @return $this
-     */
-    public function setCriteria(Criteria $criteria)
-    {
-        $this->criteria = $criteria;
-
-        return $this;
-    }
-
-    /**
-     * @return Criteria
-     */
-    public function getCriteria()
-    {
-        return $this->criteria;
-    }
-
-    /**
-     * @param $maxResponses
-     * @return $this
-     */
-    public function setMaxResponses($maxResponses)
-    {
-        $this->maxResponses = $maxResponses;
-
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getMaxResponses()
-    {
-        return $this->maxResponses;
     }
 
     /**
@@ -285,5 +292,26 @@ class HotelSearch
         $this->pos->getSource()->getRequestorId()->getCompanyName()->setName($companyName);
 
         return $this;
+    }
+
+    /**
+     * @param array $availRequestSegments
+     */
+    public function setAvailRequestSegments($availRequestSegments)
+    {
+        $this->availRequestSegments = $availRequestSegments;
+    }
+
+    public function addAvailRequestSegment(AvailRequestSegment $availRequestSegment)
+    {
+        $this->availRequestSegments[] = $availRequestSegment;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAvailRequestSegments()
+    {
+        return $this->availRequestSegments;
     }
 }

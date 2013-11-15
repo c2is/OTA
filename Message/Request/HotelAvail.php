@@ -3,6 +3,13 @@
 namespace C2is\OTA\Message\Request;
 
 use C2is\OTA\Message\AbstractMessage;
+use C2is\OTA\Model\HotelAvail\Request\AvailRequestSegment;
+use C2is\OTA\Model\HotelAvail\Request\GuestCount;
+use C2is\OTA\Model\HotelAvail\Request\RateRange;
+use C2is\OTA\Model\HotelAvail\Request\RoomStayCandidate;
+use C2is\OTA\Model\HotelAvail\Request\StayDateRange;
+use C2is\OTA\Model\HotelSearch\Request\Criteria;
+use C2is\OTA\Model\HotelSearch\Request\Criterion\HotelRef;
 
 /**
  * Class HotelSearch
@@ -25,114 +32,92 @@ class HotelAvail extends AbstractMessage
             'requestor.id',
             'requestor.type',
             'company_name',
-            'hotel.chain_code',
-            'hotel.codes',
+            'requests',
         );
     }
 
     protected function generateXml()
     {
-        $dom = new \DOMDocument('1.0', 'utf-8');
+        $hotelAvail = new \C2is\OTA\Model\HotelAvail\Request\HotelAvail();
+        $hotelAvail->setEchoToken($this->generateEcho());
+        $hotelAvail->setTimestamp($this->getTimestamp());
+        $hotelAvail->setRequestorId($this->getParam('requestor.id'));
+        $hotelAvail->setRequestorType($this->getParam('requestor.type'));
+        $hotelAvail->setCompanyName($this->getParam('company_name'));
+        $hotelAvail->setVersion($this->getParam('ota.version'));
+        $hotelAvail->setXmlns($this->getParam('ota.namespace'));
 
-        $root = $dom->createElement('OTA_HotelAvailRQ');
-        if ($locale = $this->getParam('locale')) {
-            $root->setAttribute('PrimaryLangID', $locale);
-        }
-        $root->setAttribute('EchoToken'     , $this->getParam('echo'));
-        $root->setAttribute('Target'        , $this->getParam('target', 'Test'));
-        $root->setAttribute('TimeStamp'     , $this->getParam('timestamp'));
-        $root->setAttribute('Version'       , $this->getParam('ota.version'));
-        $root->setAttribute('xmlns'         , $this->getParam('ota.namespace'));
-        $root->setAttribute('MaxResponses'  , $this->getParam('max_responses', 100));
-        $root->setAttribute('BestOnly'      , $this->getParam('best_only', 'false'));
-        $root->setAttribute('RateRangeOnly' , $rateRangeOnly = $this->getParam('rate_range_only', 'false'));
-        $root->setAttribute('SummaryOnly'   , $this->getParam('summary_only', 'false'));
-        $dom->appendChild($root);
+        $hotelAvail->setBestOnly($this->getParam('best_only', false));
+        $hotelAvail->setRateRangeOnly($rateRangeOnly = $this->getParam('rate_range_only', false));
+        $hotelAvail->setSummaryOnly($this->getParam('summary_only', false));
 
-        $root->appendChild($this->generatePOSNode($dom));
+        foreach ($this->getParam('requests', array()) as $request) {
+            $hotelAvail->addAvailRequestSegment($availRequestSegment = new AvailRequestSegment());
 
-        $availRequestSegments = $dom->createElement('AvailRequestSegments');
+            $type = empty($request['type']) ? 'Room' : $request['type'];
+            $availRequestSegment->setAvailReqType($type);
 
-        $availRequestSegment = $dom->createElement('AvailRequestSegment');
-        $availRequestSegment->setAttribute('AvailReqType', $this->getParam('type', 'Room'));
-
-        $duration = null;
-        if ($startDate = date('Y-m-d', strtotime($this->getParam('date_range.start_date'))) and ($endDate = date('Y-m-d', strtotime($this->getParam('date_range.end_date'))) or $duration = $this->getParam('date_range.duration'))) {
-            $stayDateRange = $dom->createElement('StayDateRange');
-            $stayDateRange->setAttribute('Start', $startDate);
-            if ($endDate) {
-                $stayDateRange->setAttribute('End', $endDate);
-            }
-            if ($duration) {
-                $stayDateRange->setAttribute('Duration', $duration);
-            }
-            $dateWindowRange = $dom->createElement('DateWindowRange');
-            $dateWindowRange->appendChild($dom->createTextNode($startDate));
-
-            $stayDateRange->appendChild($dateWindowRange);
-            $availRequestSegment->appendChild($stayDateRange);
-        }
-
-        if ($rateRangeOnly and $rateRangeMax = $this->getParam('rate_range.max')) {
-            $rateRange = $dom->createElement('RateRange');
-            $rateRange->setAttribute('MinRate', $this->getParam('rate_range.min', 0));
-            $rateRange->setAttribute('MaxRate', $this->getParam('rate_range.max'));
-            $rateRange->setAttribute('CurrencyCode', $this->getParam('rate_range.currency', 'EUR'));
-        }
-
-        if ($rooms = $this->getParam('rooms') and is_array($rooms)) {
-            $roomStayCandidates = $dom->createElement('RoomStayCandidates');
-
-            foreach ($rooms as $room) {
-                $roomStayCandidate  = $dom->createElement('RoomStayCandidate');
-                $roomStayCandidate->setAttribute('Quantity', $room['quantity']);
-                $guestCounts = $dom->createElement('GuestCounts');
-                foreach ($room['guests'] as $guest) {
-                    $guestCount = $dom->createElement('GuestCount');
-                    $category   = isset($guest['category']) ? $guest['category']    : 10;
-                    $count      = isset($guest['count'])    ? $guest['count']       : 1;
-                    $guestCount->setAttribute('AgeQualifyingCode', $category);
-                    $guestCount->setAttribute('Count', $count);
-                    if (isset($guest['age'])) {
-                        $guestCount->setAttribute('Age', $guest['age']);
-                    }
-                    $guestCounts->appendChild($guestCount);
+            $duration = null;
+            if (isset($request['date_range']) and ((isset($request['date_range']['start_date']) and $startDate = $request['date_range']['start_date']) and ((isset($request['date_range']['end_date']) and $endDate = $request['date_range']['end_date']) or (isset($request['date_range']['duration']) and $duration = $request['date_range']['duration'])))) {
+                $availRequestSegment->setStayDateRange($stayDateRange = new StayDateRange());
+                $stayDateRange->setStart($startDate);
+                if ($endDate) {
+                    $stayDateRange->setEnd($endDate);
                 }
-                $roomStayCandidate->appendChild($guestCounts);
+                if ($duration) {
+                    $stayDateRange->setDuration($duration);
+                }
+                $stayDateRange->setRange(date('Y-m-d', strtotime($startDate)));
             }
 
-            $roomStayCandidates->appendChild($roomStayCandidate);
-            $availRequestSegment->appendChild($roomStayCandidates);
+            if ($rateRangeOnly and isset($request['rate_range']) and isset($request['rate_range']['max']) and $rateRangeMax = $request['rate_range']['max']) {
+                $availRequestSegment->setRateRange($rateRange = new RateRange());
+                $min = isset($request['rate_range']['min']) ? $request['rate_range']['min'] : 0;
+                $rateRange->setMin($min);
+                $rateRange->setMax($request['rate_range']['max']);
+                $currency = isset($request['rate_range']['currency']) ? $request['rate_range']['currency'] : 'EUR';
+                $rateRange->setCurrency($currency);
+            }
+
+            if (isset($request['rooms']) and $rooms = $request['rooms'] and is_array($rooms)) {
+                foreach ($rooms as $room) {
+                    $availRequestSegment->addRoomStayCandidate($roomStayCandidate = new RoomStayCandidate());
+                    $roomStayCandidate->setQuantity($room['quantity']);
+
+                    foreach ($room['guests'] as $guest) {
+                        $roomStayCandidate->addGuestCount($guestCount = new GuestCount());
+                        $category   = isset($guest['category']) ? $guest['category']    : 10;
+                        $count      = isset($guest['count'])    ? $guest['count']       : 1;
+                        $guestCount->setAgeCode($category);
+                        $guestCount->setCount($count);
+                        if (isset($guest['age'])) {
+                            $guestCount->setAge($guest['age']);
+                        }
+                    }
+                }
+            }
+
+            if (isset($request['hotel'])) {
+                $availRequestSegment->setCriteria($hotelSearchCriteria = new Criteria());
+                foreach ($request['hotel']['codes'] as $hotelCode) {
+                    $criterion = new HotelRef();
+                    $criterion->setChainCode($request['hotel']['chain_code']);
+                    $criterion->setHotelCode($hotelCode);
+                    $hotelSearchCriteria->addCriterion($criterion);
+                }
+            }
         }
 
-        $hotelSearchCriteria = $dom->createElement('HotelSearchCriteria');
-        foreach ($this->getParam('hotel.codes') as $hotelCode) {
-            $criterion = $dom->createElement('Criterion');
-            $hotelRef = $dom->createElement('HotelRef');
+        $serializer = \JMS\Serializer\SerializerBuilder::create()->build();
+        $this->xml = $serializer->serialize($hotelAvail, 'xml');
 
-            $hotelRef->setAttribute('ChainCode', $this->getParam('hotel.chain_code'));
-            $hotelRef->setAttribute('HotelCode', $hotelCode);
-
-            $criterion->appendChild($hotelRef);
-            $hotelSearchCriteria->appendChild($criterion);
-        }
-
-        $availRequestSegment->appendChild($hotelSearchCriteria);
-
-        $availRequestSegments->appendChild($availRequestSegment);
-        $root->appendChild($availRequestSegments);
-
-        $dom->formatOutput = true;
-        return $dom->saveXML();
-    }
-
-    protected function fromXml($xml)
-    {
-        // TODO: Implement fromXml() method.
+        return $serializer->serialize($hotelAvail, 'xml');
     }
 
     public function getData()
     {
-        // TODO: Implement getData() method.
+        $serializer = \JMS\Serializer\SerializerBuilder::create()->build();
+
+        return $serializer->deserialize($this->getXml(), 'C2is\\OTA\\Model\\HotelSearch\\Request\\HotelSearch', 'xml');
     }
 }

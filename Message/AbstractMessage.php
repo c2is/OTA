@@ -33,8 +33,6 @@ abstract class AbstractMessage extends Parametrable
 
     abstract protected function generateXml();
 
-    abstract protected function fromXml($xml);
-
     abstract public function getData();
 
     /**
@@ -59,20 +57,22 @@ abstract class AbstractMessage extends Parametrable
      */
     public function getXml()
     {
-        foreach ($this->getRequiredParams() as $key => $value) {
-            $paramName = is_int($key) ? $value : $key;
-            if (!is_int($key) and !$this->getParam($paramName) and $value) {
-                $this->addParam($paramName, $value);
-            }
-
-            if ($this->getParam($paramName, null) === null) {
-                throw new MissingParameterException(sprintf('Parameter "%s" is required and was not found.', $paramName));
-            }
-        }
-
         if (!$this->generated) {
+            foreach ($this->getRequiredParams() as $key => $value) {
+                $paramName = is_int($key) ? $value : $key;
+                if (!is_int($key) and !$this->getParam($paramName) and $value) {
+                    $this->addParam($paramName, $value);
+                }
+
+                if ($this->getParam($paramName, null) === null) {
+                    throw new MissingParameterException(sprintf('Parameter "%s" is required and was not found.', $paramName));
+                }
+            }
+
             $this->xml = $this->generateXml();
             $this->generated = true;
+        } else {
+
         }
 
         return $this->xml;
@@ -80,7 +80,6 @@ abstract class AbstractMessage extends Parametrable
 
     public function setXml($xml)
     {
-        $this->fromXml($xml);
         $this->xml = $xml;
         $this->generated = true;
     }

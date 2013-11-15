@@ -3,6 +3,19 @@
 namespace C2is\OTA\Message\Request;
 
 use C2is\OTA\Message\AbstractMessage;
+use C2is\OTA\Model\HotelSearch\Request\Criteria;
+use C2is\OTA\Model\HotelSearch\Request\Criterion\Address;
+use C2is\OTA\Model\HotelSearch\Request\Criterion\Filter;
+use C2is\OTA\Model\HotelSearch\Request\Criterion\FilterExtension;
+use C2is\OTA\Model\HotelSearch\Request\Criterion\GuestCount;
+use C2is\OTA\Model\HotelSearch\Request\Criterion\GuestCounts;
+use C2is\OTA\Model\HotelSearch\Request\Criterion\HotelRef;
+use C2is\OTA\Model\HotelSearch\Request\Criterion\Keyword;
+use C2is\OTA\Model\HotelSearch\Request\Criterion\Position;
+use C2is\OTA\Model\HotelSearch\Request\Criterion\Radius;
+use C2is\OTA\Model\HotelSearch\Request\Criterion\RoomStayCandidate;
+use C2is\OTA\Model\HotelSearch\Request\Criterion\RoomStayCandidates;
+use C2is\OTA\Model\HotelSearch\Request\Criterion\StayDateRange;
 use JMS\Serializer\SerializerBuilder;
 
 /**
@@ -32,202 +45,131 @@ class HotelSearch extends AbstractMessage
 
     protected function generateXml()
     {
-        $dom = new \DOMDocument('1.0', 'utf-8');
-
-        $root = $dom->createElement('OTA_HotelSearchRQ');
-        if ($locale = $this->getParam('locale')) {
-            $root->setAttribute('PrimaryLangID', $locale);
-        }
-        $root->setAttribute('EchoToken'     , $this->getParam('echo'));
-        $root->setAttribute('Target'        , $this->getParam('target', 'Test'));
-        $root->setAttribute('TimeStamp'     , $this->getParam('timestamp'));
-        $root->setAttribute('Version'       , $this->getParam('ota.version'));
-        $root->setAttribute('xmlns'         , $this->getParam('ota.namespace'));
-        $root->setAttribute('MaxResponses'  , $this->getParam('max_responses', 100));
-        $dom->appendChild($root);
-
-        $root->appendChild($this->generatePOSNode($dom));
-
-        $criteria = $dom->createElement('Criteria');
+        $hotelSearch = new \C2is\OTA\Model\HotelSearch\Request\HotelSearch();
+        $hotelSearch->setEchoToken($this->generateEcho());
+        $hotelSearch->setTimestamp($this->getTimestamp());
+        $hotelSearch->setRequestorId($this->getParam('requestor.id'));
+        $hotelSearch->setRequestorType($this->getParam('requestor.type'));
+        $hotelSearch->setCompanyName($this->getParam('company_name'));
+        $hotelSearch->setVersion($this->getParam('ota.version'));
+        $hotelSearch->setXmlns($this->getParam('ota.namespace'));
+        $hotelSearch->setMaxResponses($this->getParam('max_responses'));
+        $hotelSearch->setCriteria($criteria = new Criteria());
 
         if ($hotel = $this->getParam('hotel') and is_array($hotel)) {
-
             if ($codes = $this->getParam('hotel.codes')) {
                 foreach ($codes as $code) {
-                    $criterion = $dom->createElement('Criterion');
-                    $hotelRef = $dom->createElement('HotelRef');
-                    $hotelRef->setAttribute('ChainCode', $this->getParam('hotel.chain_code'));
-                    $hotelRef->setAttribute('HotelCode', $code);
-                    $criterion->appendChild($hotelRef);
-                    $criteria->appendChild($criterion);
+                    $criterion = new HotelRef();
+                    $criterion->setChainCode($this->getParam('hotel.chain_code'));
+                    $criterion->setHotelCode($code);
+                    $criteria->addCriterion($criterion);
                 }
             } else {
-                $criterion = $dom->createElement('Criterion');
-                $hotelRef = $dom->createElement('HotelRef');
-                $hotelRef->setAttribute('ChainCode', $this->getParam('hotel.chain_code'));
+                $criterion = new HotelRef();
+                $criterion->setChainCode($this->getParam('hotel.chain_code'));
                 if ($area = $this->getParam('hotel.area')) {
-                    $hotelRef->setAttribute('AreaID', $area);
+                    $criterion->setArea($area);
                 }
                 if ($name = $this->getParam('hotel.name')) {
-                    $hotelRef->setAttribute('HotelName', $name);
+                    $criterion->setHotelName($name);
                 }
                 if ($brand = $this->getParam('hotel.brand')) {
-                    $hotelRef->setAttribute('BrandCode', $brand);
-                    $hotelRef->setAttribute('BrandName', 'Pegasus');
+                    $criterion->setBrandCode($brand);
+                    $criterion->setBrandName('Pegasus');
                 }
-                $criterion->appendChild($hotelRef);
-                $criteria->appendChild($criterion);
+                $criteria->addCriterion($criterion);
             }
         }
 
         if ($rooms = $this->getParam('rooms') and is_array($rooms)) {
-            $criterion          = $dom->createElement('Criterion');
-            $roomStayCandidates = $dom->createElement('RoomStayCandidates');
+            $criteria->addCriterion($criterion = new RoomStayCandidates());
 
             foreach ($rooms as $room) {
-                $roomStayCandidate  = $dom->createElement('RoomStayCandidate');
-                $guestCounts = $dom->createElement('GuestCounts');
+                $criterion->addRoomStayCandidate($roomStayCandidate  = new RoomStayCandidate());
+                $roomStayCandidate->setGuestCounts($guestCounts = new GuestCounts());
                 foreach ($room as $guest) {
-                    $guestCount = $dom->createElement('GuestCount');
+                    $guestCounts->addGuestCount($guestCount = new GuestCount());
                     $category   = isset($guest['category']) ? $guest['category']    : 10;
                     $count      = isset($guest['count'])    ? $guest['count']       : 1;
-                    $guestCount->setAttribute('AgeQualifyingCode', $category);
-                    $guestCount->setAttribute('Count', $count);
-                    if (isset($guest['age'])) {
-                        $guestCount->setAttribute('Age', $guest['age']);
-                    }
-                    $guestCounts->appendChild($guestCount);
-                }
-                $roomStayCandidate->appendChild($guestCounts);
-                $roomStayCandidates->appendChild($roomStayCandidate);
-            }
+                    $guestCount->setAgeCode($category);
+                    $guestCount->setCount($count);
 
-            $criterion->appendChild($roomStayCandidates);
-            $criteria->appendChild($criterion);
+                    if (isset($guest['age'])) {
+                        $guestCount->setAge($guest['age']);
+                    }
+                }
+            }
         }
 
         if ($dateRange = $this->getParam('date_range') and is_array($dateRange)) {
-            $criterion = $dom->createElement('Criterion');
-            $stayDateRange = $dom->createElement('StayDateRange');
+            $criteria->addCriterion($criterion = new StayDateRange());
 
-            $stayDateRange->setAttribute('Start', date('Y-m-d', strtotime($this->getParam('date_range.start_date'))));
-            $stayDateRange->setAttribute('End'  , date('Y-m-d', strtotime($this->getParam('date_range.end_date'))));
-
-            $criterion->appendChild($stayDateRange);
-            $criteria->appendChild($criterion);
+            $criterion->setStart($this->getParam('date_range.start_date'));
+            $criterion->setEnd($this->getParam('date_range.end_date'));
         }
 
         if ($address = $this->getParam('address') and is_array($address)) {
-            $criterion = $dom->createElement('Criterion');
-            $address = $dom->createElement('Address');
+            $criteria->addCriterion($criterion = new Address());
 
             if ($cityName = $this->getParam('address.city_name')) {
-                $cityNameNode = $dom->createElement('CityName');
-                $cityNameNode->appendChild($dom->createTextNode($cityName));
-                $address->appendChild($cityNameNode);
+                $criterion->setCityName($cityName);
             }
             if ($countryName = $this->getParam('address.country_name')) {
-                $countryNameNode = $dom->createElement('CountryName');
-                $countryNameNode->appendChild($dom->createTextNode($countryName));
-                $address->appendChild($countryNameNode);
+                $criterion->setCountryName($countryName);
             }
-
-            $criterion->appendChild($address);
-            $criteria->appendChild($criterion);
         }
 
         if ($position = $this->getParam('position') and is_array($position)) {
-            $criterion = $dom->createElement('Criterion');
-            $position = $dom->createElement('Position');
+            $criteria->addCriterion($criterion = new Position());
 
-            $position->setAttribute('Longitude', $this->getParam('position.longitude'));
-            $position->setAttribute('Latitude' , $this->getParam('position.latitude'));
-
-            $criterion->appendChild($position);
-            $criteria->appendChild($criterion);
+            $criterion->setLongitude($this->getParam('position.longitude'));
+            $criterion->setLatitude($this->getParam('position.latitude'));
         }
 
         if ($radius = $this->getParam('radius') and is_array($radius)) {
-            $criterion = $dom->createElement('Criterion');
-            $radius = $dom->createElement('Radius');
+            $criteria->addCriterion($criterion = new Radius());
 
-            $radius->setAttribute('Distance'        , $this->getParam('radius.distance'));
-            $radius->setAttribute('DistanceMeasure' , $this->getParam('radius.measure', 'km'));
-
-            $criterion->appendChild($radius);
-            $criteria->appendChild($criterion);
+            $criterion->setDistance($this->getParam('radius.distance'));
+            $criterion->setDistanceMeasure($this->getParam('radius.measure', 'km'));
         }
 
         if ($this->getParam('keyword')) {
-            $criterion = $dom->createElement('Criterion');
-            $tpaExtensions = $dom->createElement('TPA_Extensions');
-            $keyword = $dom->createElement('Keyword');
+            $criteria->addCriterion($criterion = new Keyword());
 
-            $keyword->appendChild($dom->createTextNode($this->getParam('keyword')));
-
-            $tpaExtensions->appendChild($keyword);
-            $criterion->appendChild($tpaExtensions);
-            $criteria->appendChild($criterion);
-        }
-
-        if ($amenities = $this->getParam('amenities') and is_array($amenities)) {
-            $criterion = $dom->createElement('Criterion');
-            $tpaExtensions = $dom->createElement('TPA_Extensions');
-
-            foreach ($amenities as $amenity) {
-                $amenityNode = $dom->createElement('Amenity');
-                if (isset($amenity['ota'])) {
-                    $amenityNode->setAttribute('OTACode', $amenity['ota']['code']);
-                    $amenityNode->setAttribute('OTAType', $amenity['ota']['type']);
-                } else {
-                    $amenityNode->setAttribute('Code', $amenity['code']);
-                }
-                $tpaExtensions->appendChild($amenityNode);
-            }
-
-            $criterion->appendChild($tpaExtensions);
-            $criteria->appendChild($criterion);
+            $criterion->setKeyword($this->getParam('keyword'));
         }
 
         if ($filter = $this->getParam('filter') and is_array($filter)) {
-            $criterion = $dom->createElement('Criterion');
-            $tpaExtensions = $dom->createElement('TPA_Extensions');
-            $filterNode = $dom->createElement('Filter');
+            $criteria->addCriterion(new FilterExtension($criterion = new Filter()));
 
             if (isset($filter['bpromo'])) {
-                $filterNode->setAttribute('bpromo', ($filter['bpromo'] === true or $filter['bpromo'] === 'true') ? 'true' : 'false');
+                $criterion->setPromo($filter['bpromo'] === true or $filter['bpromo'] === 'true');
             }
             if (isset($filter['bpackage'])) {
-                $filterNode->setAttribute('bpackage', ($filter['bpackage'] === true or $filter['bpackage'] === 'true') ? 'true' : 'false');
+                $criterion->setPackage($filter['bpackage'] === true or $filter['bpackage'] === 'true');
             }
             if (isset($filter['bstay'])) {
-                $filterNode->setAttribute('bstay', ($filter['bstay'] === true or $filter['bstay'] === 'true') ? 'true' : 'false');
+                $criterion->setStay($filter['bstay'] === true or $filter['bstay'] === 'true');
             }
             if (isset($filter['rate_range'])) {
-                $filterNode->setAttribute('RateRangeReq', ($filter['rate_range'] === true or $filter['rate_range'] === 'true') ? 'true' : 'false');
+                $criterion->setRateRangeReq($filter['rate_range'] === true or $filter['rate_range'] === 'true');
             }
             if (isset($filter['rate_range_name'])) {
-                $filterNode->setAttribute('RateRangeNameReq', ($filter['rate_range_name'] === true or $filter['rate_range_name'] === 'true') ? 'true' : 'false');
+                $criterion->setRateRangeNameReq($filter['rate_range_name'] === true or $filter['rate_range_name'] === 'true');
             }
-
-            $tpaExtensions->appendChild($filterNode);
-            $criterion->appendChild($tpaExtensions);
-            $criteria->appendChild($criterion);
         }
 
-        $root->appendChild($criteria);
+        $serializer = \JMS\Serializer\SerializerBuilder::create()->build();
 
-        $dom->formatOutput = true;
-        return $dom->saveXML();
-    }
+        $this->xml = $serializer->serialize($hotelSearch, 'xml');
 
-    protected function fromXml($xml)
-    {
-        // TODO: Implement fromXml() method.
+        return $serializer->serialize($hotelSearch, 'xml');
     }
 
     public function getData()
     {
-        // TODO: Implement getData() method.
+        $serializer = \JMS\Serializer\SerializerBuilder::create()->build();
+
+        return $serializer->deserialize($this->getXml(), 'C2is\\OTA\\Model\\HotelSearch\\Request\\HotelSearch', 'xml');
     }
 }
