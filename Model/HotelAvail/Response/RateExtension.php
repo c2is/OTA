@@ -11,7 +11,7 @@ class RateExtension
 {
     /**
      * @SerializedName("BookingCancelPolicyRPH")
-     * @Type("C2is\OTA\Model\HotelAvail\Response\BookingCancelPolicyRph")
+     * @Type("C2is\OTA\Model\HotelAvail\Response\Rate\BookingCancelPolicyRph")
      * @var \C2is\OTA\Model\HotelAvail\Response\Rate\BookingCancelPolicyRph
      */
     private $bookingCancelPolicyRPH;

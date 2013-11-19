@@ -108,7 +108,12 @@ class BookingCancelPolicy
      */
     public function setBookingPolicy($bookingPolicy)
     {
-        $this->bookingPolicy = $bookingPolicy;
+        $indexedBookingPolicies = array();
+        foreach ($bookingPolicy as $text) {
+            $indexedBookingPolicies[$text->getLang()] = $text;
+        }
+
+        $this->bookingPolicy = $indexedBookingPolicies;
 
         return $this;
     }
@@ -118,7 +123,7 @@ class BookingCancelPolicy
      */
     public function addBookingPolicy(Text $text)
     {
-        $this->bookingPolicy[] = $text;
+        $this->bookingPolicy[$text->getLang()] = $text;
 
         return $this;
     }
@@ -136,7 +141,12 @@ class BookingCancelPolicy
      */
     public function setCancelPolicy($cancelPolicy)
     {
-        $this->cancelPolicy = $cancelPolicy;
+        $indexedCancelPolicies = array();
+        foreach ($cancelPolicy as $text) {
+            $indexedCancelPolicies[$text->getLang()] = $text;
+        }
+
+        $this->cancelPolicy = $indexedCancelPolicies;
 
         return $this;
     }
@@ -146,7 +156,7 @@ class BookingCancelPolicy
      */
     public function addCancelPolicy(Text $text)
     {
-        $this->cancelPolicy[] = $text;
+        $this->cancelPolicy[$text->getLang()] = $text;
 
         return $this;
     }
@@ -157,5 +167,21 @@ class BookingCancelPolicy
     public function getCancelPolicy()
     {
         return $this->cancelPolicy;
+    }
+
+    public function getCancelPolicyForLocale($locale)
+    {
+        $defaultValue = '';
+
+        foreach ($this->cancelPolicy as $cancelPolicy) {
+            if ($cancelPolicy->getLang() == $locale) {
+                return $cancelPolicy->getValue();
+            }
+            if ($cancelPolicy->getLang() == 'EN') {
+                $defaultValue = $cancelPolicy->getValue();
+            }
+        }
+
+        return $defaultValue;
     }
 }

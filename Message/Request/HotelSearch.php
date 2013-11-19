@@ -54,6 +54,7 @@ class HotelSearch extends AbstractMessage
         $hotelSearch->setVersion($this->getParam('ota.version'));
         $hotelSearch->setXmlns($this->getParam('ota.namespace'));
         $hotelSearch->setMaxResponses($this->getParam('max_responses'));
+        $hotelSearch->setLang($this->getParam('lang', 'en'));
         $hotelSearch->setCriteria($criteria = new Criteria());
 
         if ($hotel = $this->getParam('hotel') and is_array($hotel)) {

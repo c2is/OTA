@@ -18,9 +18,9 @@ class AdditionalDetail
     private $type;
 
     /**
-     * @SerializedName("Description")
+     * @SerializedName("DetailDescription")
      * @XmlList
-     * @Type("array<C2is\OTA\Model\HotelAvail\Response\Text>")
+     * @Type("array<C2is\OTA\Model\HotelAvail\Response\DetailDescription>")
      * @var array
      */
     private $description;
@@ -48,7 +48,12 @@ class AdditionalDetail
      */
     public function setDescription($description)
     {
-        $this->description = $description;
+        $indexedDescriptions = array();
+        foreach ($description as $text) {
+            $indexedDescriptions[$text->getLang()] = $text;
+        }
+
+        $this->description = $indexedDescriptions;
 
         return $this;
     }
@@ -58,7 +63,7 @@ class AdditionalDetail
      */
     public function addDescription(Text $text)
     {
-        $this->description[] = $text;
+        $this->description[$text->getLang()] = $text;
 
         return $this;
     }

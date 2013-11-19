@@ -12,14 +12,14 @@ class RoomRate
     /**
      * @SerializedName("EffectiveDate")
      * @XmlAttribute
-     * @Type("DateTime<'Y-m-d'>")
+     * @Type("string")
      * @var \DateTime
      */
     private $startDate;
     /**
      * @SerializedName("ExpireDate")
      * @XmlAttribute
-     * @Type("DateTime<'Y-m-d'>")
+     * @Type("string")
      * @var \DateTime
      */
     private $endDate;
@@ -58,6 +58,9 @@ class RoomRate
      */
     public function setStartDate($startDate)
     {
+        if (!$startDate instanceof \DateTime) {
+            $startDate = new \DateTime($startDate);
+        }
         $this->startDate = $startDate;
 
         return $this;
@@ -68,7 +71,7 @@ class RoomRate
      */
     public function getStartDate()
     {
-        return $this->startDate;
+        return $this->startDate->format('Y-m-d');
     }
 
     /**
@@ -76,6 +79,9 @@ class RoomRate
      */
     public function setEndDate($endDate)
     {
+        if (!$endDate instanceof \DateTime) {
+            $endDate = new \DateTime($endDate);
+        }
         $this->endDate = $endDate;
 
         return $this;
@@ -86,7 +92,7 @@ class RoomRate
      */
     public function getEndDate()
     {
-        return $this->endDate;
+        return $this->endDate->format('Y-m-d');
     }
 
     /**
@@ -169,5 +175,26 @@ class RoomRate
     public function getRates()
     {
         return $this->rates;
+    }
+
+    /**
+     * @return array The total amount of this room's stay. The array contains both before tax and after tax values.
+     */
+    public function getTotalAmount()
+    {
+        $total = array(
+            'before_tax' => 0,
+            'after_tax' => 0,
+            'currency' => 'EUR',
+        );
+
+        foreach ($this->getRates() as $rate) {
+            $base = $rate->getBase();
+            $total['before_tax']    += ($base->getBeforeTax() * $rate->getUnitMultiplier());
+            $total['after_tax']     += ($base->getAfterTax()  * $rate->getUnitMultiplier());
+            $total['currency']       = $base->getCurrency();
+        }
+
+        return $total;
     }
 }

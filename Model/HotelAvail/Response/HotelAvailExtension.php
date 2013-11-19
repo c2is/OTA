@@ -15,4 +15,27 @@ class HotelAvailExtension
      * @var array
      */
     private $bookingCancelPolicies = array();
+
+    /**
+     * @param array $bookingCancelPolicies
+     */
+    public function setBookingCancelPolicies($bookingCancelPolicies)
+    {
+        $indexedBookingCancelPolicies = array();
+        foreach ($bookingCancelPolicies as $bookingCancelPolicy) {
+            $indexedBookingCancelPolicies[$bookingCancelPolicy->getRph()] = $bookingCancelPolicy;
+        }
+
+        $this->bookingCancelPolicies = $indexedBookingCancelPolicies;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getBookingCancelPolicies()
+    {
+        return $this->bookingCancelPolicies;
+    }
 }

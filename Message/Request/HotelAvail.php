@@ -46,6 +46,7 @@ class HotelAvail extends AbstractMessage
         $hotelAvail->setCompanyName($this->getParam('company_name'));
         $hotelAvail->setVersion($this->getParam('ota.version'));
         $hotelAvail->setXmlns($this->getParam('ota.namespace'));
+        $hotelAvail->setLang($this->getParam('lang', 'en'));
 
         $hotelAvail->setBestOnly($this->getParam('best_only', false));
         $hotelAvail->setRateRangeOnly($rateRangeOnly = $this->getParam('rate_range_only', false));

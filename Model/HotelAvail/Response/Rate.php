@@ -69,7 +69,7 @@ class Rate
     private $description = array();
 
     /**
-     * @SerializedName("Extensions")
+     * @SerializedName("TPA_Extensions")
      * @Type("C2is\OTA\Model\HotelAvail\Response\RateExtension")
      * @var \C2is\OTA\Model\HotelAvail\Response\RateExtension
      */

@@ -26,7 +26,7 @@ class Base
     private $beforeTax;
 
     /**
-     * @SerializedName("Currency")
+     * @SerializedName("CurrencyCode")
      * @XmlAttribute
      * @Type("string")
      * @var string

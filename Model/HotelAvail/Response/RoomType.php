@@ -56,7 +56,12 @@ class RoomType
      */
     public function setDescription($description)
     {
-        $this->description = $description;
+        $indexedDescriptions = array();
+        foreach ($description as $text) {
+            $indexedDescriptions[$text->getLang()] = $text;
+        }
+
+        $this->description = $indexedDescriptions;
 
         return $this;
     }
@@ -66,7 +71,7 @@ class RoomType
      */
     public function addDescription(Text $text)
     {
-        $this->description[] = $text;
+        $this->description[$text->getLang()] = $text;
 
         return $this;
     }
@@ -77,6 +82,22 @@ class RoomType
     public function getDescription()
     {
         return $this->description;
+    }
+
+    public function getDescriptionForLocale($locale)
+    {
+        $defaultValue = '';
+
+        foreach ($this->description as $description) {
+            if ($description->getLang() == $locale) {
+                return $description->getValue();
+            }
+            if ($description->getLang() == 'EN') {
+                $defaultValue = $description->getValue();
+            }
+        }
+
+        return $defaultValue;
     }
 
     /**
