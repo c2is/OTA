@@ -19,10 +19,10 @@ class RoomRateExtension
     /**
      * @SerializedName("Occupancy")
      * @XmlList(inline=false, entry="GuestCounts")
-     * @Type("array<C2is\OTA\Model\HotelAvail\Response\GuestCounts>")
-     * @var array
+     * @Type("C2is\OTA\Model\HotelAvail\Response\Occupancy")
+     * @var \C2is\OTA\Model\HotelAvail\Response\Occupancy
      */
-    private $occupancy = array();
+    private $occupancy;
 
     /**
      * @param array $services
@@ -53,9 +53,10 @@ class RoomRateExtension
     }
 
     /**
-     * @param array $occupancy
+     * @param Occupancy $occupancy
+     * @return $this
      */
-    public function setOccupancy($occupancy)
+    public function setOccupancy(Occupancy $occupancy)
     {
         $this->occupancy = $occupancy;
 
@@ -63,17 +64,7 @@ class RoomRateExtension
     }
 
     /**
-     * @param GuestCounts $occupancy
-     */
-    public function addOccupancy(GuestCounts $guestCounts)
-    {
-        $this->occupancy[] = $guestCounts;
-
-        return $this;
-    }
-
-    /**
-     * @return array
+     * @return Occupancy
      */
     public function getOccupancy()
     {
