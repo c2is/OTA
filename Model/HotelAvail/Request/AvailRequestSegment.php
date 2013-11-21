@@ -43,6 +43,13 @@ class AvailRequestSegment
      */
     private $criteria;
 
+    /**
+     * @SerializedName("TPA_Extensions")
+     * @Type("C2is\OTA\Model\HotelAvail\Request\Extensions")
+     * @var \C2is\OTA\Model\HotelAvail\Request\Extensions
+     */
+    private $extensions;
+
     public function setAvailReqType($availReqType)
     {
         $this->availReqType = $availReqType;
@@ -114,5 +121,23 @@ class AvailRequestSegment
     public function getCriteria()
     {
         return $this->criteria;
+    }
+
+    /**
+     * @param \C2is\OTA\Model\HotelAvail\Request\Extensions $extensions
+     */
+    public function setExtensions($extensions)
+    {
+        $this->extensions = $extensions;
+
+        return $this;
+    }
+
+    /**
+     * @return \C2is\OTA\Model\HotelSearch\Request\Extensions
+     */
+    public function getExtensions()
+    {
+        return $this->extensions;
     }
 }
