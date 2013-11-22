@@ -4,10 +4,13 @@ namespace C2is\OTA\Message\Request;
 
 use C2is\OTA\Message\AbstractMessage;
 use C2is\OTA\Model\HotelAvail\Request\AvailRequestSegment;
+use C2is\OTA\Model\HotelAvail\Request\Extensions;
+use C2is\OTA\Model\HotelAvail\Request\Filter;
 use C2is\OTA\Model\HotelAvail\Request\GuestCount;
 use C2is\OTA\Model\HotelAvail\Request\RateRange;
 use C2is\OTA\Model\HotelAvail\Request\RoomStayCandidate;
 use C2is\OTA\Model\HotelAvail\Request\StayDateRange;
+use C2is\OTA\Model\HotelAvail\Request\TextDelimiter;
 use C2is\OTA\Model\HotelSearch\Request\Criteria;
 use C2is\OTA\Model\HotelSearch\Request\Criterion\HotelRef;
 
@@ -105,6 +108,17 @@ class HotelAvail extends AbstractMessage
                     $criterion->setChainCode($request['hotel']['chain_code']);
                     $criterion->setHotelCode($hotelCode);
                     $hotelSearchCriteria->addCriterion($criterion);
+                }
+            }
+
+            if (isset($request['formatters'])) {
+                $availRequestSegment->setExtensions($extensions = new Extensions());
+                $extensions->setFilter($fitler = new Filter());
+                foreach ($request['formatters'] as $type => $value) {
+                    $formatter = new TextDelimiter();
+                    $formatter->setOn($type);
+                    $formatter->setValue($value);
+                    $fitler->addResponseFormatter($formatter);
                 }
             }
         }

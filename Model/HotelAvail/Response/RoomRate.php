@@ -54,6 +54,14 @@ class RoomRate
     private $rates = array();
 
     /**
+     * @SerializedName("RoomRateDescription")
+     * @XmlList(inline=false, entry="Text")
+     * @Type("array<C2is\OTA\Model\HotelAvail\Response\Text>")
+     * @var array
+     */
+    private $description = array();
+
+    /**
      * @param \DateTime $startDate
      */
     public function setStartDate($startDate)
@@ -175,6 +183,34 @@ class RoomRate
     public function getRates()
     {
         return $this->rates;
+    }
+
+    /**
+     * @param array $description
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * @param Text $text
+     */
+    public function addDescription(Text $text)
+    {
+        $this->description[] = $text;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 
     /**
