@@ -82,9 +82,8 @@ class Service
     private $price;
 
     /**
-     * @Accessor(getter="getDescription", setter="setDescription")
      * @SerializedName("Description")
-     * @XmlList(inline=true, entry="Text")
+     * @XmlList(inline=false, entry="Text")
      * @Type("array<C2is\OTA\Model\HotelAvail\Response\Text>")
      * @var array
      */
