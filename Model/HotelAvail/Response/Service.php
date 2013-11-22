@@ -59,7 +59,7 @@ class Service
     private $pricingType;
 
     /**
-     * @SerializedName("isNightRequested")
+     * @SerializedName("NightRequested")
      * @XmlAttribute
      * @Type("boolean")
      * @var boolean
@@ -67,12 +67,12 @@ class Service
     private $isNightRequested;
 
     /**
-     * @SerializedName("isGuestsRequested")
+     * @SerializedName("PaxRequested")
      * @XmlAttribute
      * @Type("boolean")
      * @var boolean
      */
-    private $isGuestsRequested;
+    private $isPaxRequested;
 
     /**
      * @SerializedName("Price")
@@ -218,7 +218,7 @@ class Service
     /**
      * @param boolean $isGuestsRequested
      */
-    public function setIsGuestsRequested($isGuestsRequested)
+    public function setIsPaxRequested($isGuestsRequested)
     {
         $this->isGuestsRequested = $isGuestsRequested;
 
@@ -228,7 +228,7 @@ class Service
     /**
      * @return boolean
      */
-    public function getIsGuestsRequested()
+    public function getIsPaxRequested()
     {
         return $this->isGuestsRequested;
     }
