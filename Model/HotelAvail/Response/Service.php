@@ -64,7 +64,7 @@ class Service
      * @Type("boolean")
      * @var boolean
      */
-    private $isNightRequested;
+    private $nightRequested;
 
     /**
      * @SerializedName("PaxRequested")
@@ -72,7 +72,7 @@ class Service
      * @Type("boolean")
      * @var boolean
      */
-    private $isPaxRequested;
+    private $paxRequested;
 
     /**
      * @SerializedName("Price")
@@ -198,11 +198,11 @@ class Service
     }
 
     /**
-     * @param boolean $isNightRequested
+     * @param boolean $nightRequested
      */
-    public function setIsNightRequested($isNightRequested)
+    public function setNightRequested($nightRequested)
     {
-        $this->isNightRequested = $isNightRequested;
+        $this->nightRequested = $nightRequested;
 
         return $this;
     }
@@ -210,17 +210,17 @@ class Service
     /**
      * @return boolean
      */
-    public function getIsNightRequested()
+    public function getNightRequested()
     {
-        return $this->isNightRequested;
+        return $this->nightRequested;
     }
 
     /**
-     * @param boolean $isGuestsRequested
+     * @param boolean $paxRequested
      */
-    public function setIsPaxRequested($isGuestsRequested)
+    public function setPaxRequested($paxRequested)
     {
-        $this->isGuestsRequested = $isGuestsRequested;
+        $this->paxRequested = $paxRequested;
 
         return $this;
     }
@@ -228,9 +228,9 @@ class Service
     /**
      * @return boolean
      */
-    public function getIsPaxRequested()
+    public function getPaxRequested()
     {
-        return $this->isGuestsRequested;
+        return $this->paxRequested;
     }
 
     /**
