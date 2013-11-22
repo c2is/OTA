@@ -6,6 +6,7 @@ use JMS\Serializer\Annotation\Type;
 use JMS\Serializer\Annotation\XmlList;
 use JMS\Serializer\Annotation\XmlAttribute;
 use JMS\Serializer\Annotation\SerializedName;
+use JMS\Serializer\Annotation\Accessor;
 
 class Service
 {
@@ -81,6 +82,7 @@ class Service
     private $price;
 
     /**
+     * @Accessor(getter="getDescription", setter="setDescription")
      * @SerializedName("Description")
      * @XmlList(inline=true, entry="Text")
      * @Type("array<C2is\OTA\Model\HotelAvail\Response\Text>")
