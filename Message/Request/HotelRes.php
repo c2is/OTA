@@ -88,6 +88,8 @@ class HotelRes extends AbstractMessage
                             $objRoomRate->setCode($roomRate['rate_plan_code']);
                         }
                         $objRoomRate->setCategory($roomRate['rate_plan_category']);
+                        $objRoomRate->setStartDate($roomRate['start_date']);
+                        $objRoomRate->setEndDate($roomRate['end_date']);
 
                         foreach ($roomRate['rates'] as $rate) {
                             $objRoomRate->addRate($objRate = new Rate());

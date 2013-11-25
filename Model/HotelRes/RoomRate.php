@@ -10,6 +10,22 @@ use JMS\Serializer\Annotation\SerializedName;
 class RoomRate
 {
     /**
+     * @SerializedName("EffectiveDate")
+     * @XmlAttribute
+     * @Type("DateTime<'Y-m-d'>")
+     * @var \DateTime
+     */
+    private $startDate;
+
+    /**
+     * @SerializedName("ExpireDate")
+     * @XmlAttribute
+     * @Type("DateTime<'Y-m-d'>")
+     * @var \DateTime
+     */
+    private $endDate;
+
+    /**
      * @SerializedName("RatePlanCode")
      * @XmlAttribute
      * @Type("string")
@@ -40,6 +56,50 @@ class RoomRate
      * @var array
      */
     private $rates;
+
+    /**
+     * @param \DateTime $startDate
+     */
+    public function setStartDate($startDate)
+    {
+        if (!$startDate instanceof \DateTime) {
+            $startDate = new \DateTime($startDate);
+        }
+
+        $this->startDate = $startDate;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getStartDate()
+    {
+        return $this->startDate;
+    }
+
+    /**
+     * @param \DateTime $endDate
+     */
+    public function setEndDate($endDate)
+    {
+        if (!$endDate instanceof \DateTime) {
+            $endDate = new \DateTime($endDate);
+        }
+
+        $this->endDate = $endDate;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getEndDate()
+    {
+        return $this->endDate;
+    }
 
     /**
      * @param string $code
