@@ -7,9 +7,13 @@ use JMS\Serializer\Annotation\Type;
 use JMS\Serializer\Annotation\XmlAttribute;
 use JMS\Serializer\Annotation\XmlList;
 use JMS\Serializer\Annotation\SerializedName;
+use JMS\Serializer\Annotation\AccessType;
 use JMS\Serializer\Annotation\XmlRoot;
 
-/** @XmlRoot("OTA_HotelAvailRS") */
+/**
+ * @XmlRoot("OTA_HotelAvailRS")
+ * @AccessType("public_method")
+ */
 class HotelAvail
 {
     /**

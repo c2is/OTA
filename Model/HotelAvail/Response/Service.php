@@ -6,8 +6,14 @@ use JMS\Serializer\Annotation\Type;
 use JMS\Serializer\Annotation\XmlList;
 use JMS\Serializer\Annotation\XmlAttribute;
 use JMS\Serializer\Annotation\SerializedName;
+use JMS\Serializer\Annotation\AccessType;
 use JMS\Serializer\Annotation\Accessor;
 
+/**
+ * Class Service
+ * @package C2is\OTA\Model\HotelAvail\Response
+ * @AccessType("public_method")
+ */
 class Service
 {
     /**
@@ -277,5 +283,21 @@ class Service
     public function getDescription()
     {
         return $this->description;
+    }
+
+    public function getDescriptionForLocale($locale)
+    {
+        $defaultValue = '';
+
+        foreach ($this->description as $text) {
+            if ($text->getLang() == $locale) {
+                return $text->getValue();
+            }
+            if ($text->getLang() == 'EN') {
+                $defaultValue = $text->getValue();
+            }
+        }
+
+        return $defaultValue;
     }
 }

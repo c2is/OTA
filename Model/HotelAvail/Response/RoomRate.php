@@ -6,7 +6,13 @@ use JMS\Serializer\Annotation\Type;
 use JMS\Serializer\Annotation\XmlList;
 use JMS\Serializer\Annotation\XmlAttribute;
 use JMS\Serializer\Annotation\SerializedName;
+use JMS\Serializer\Annotation\AccessType;
 
+/**
+ * Class RoomRate
+ * @package C2is\OTA\Model\HotelAvail\Response
+ * @AccessType("public_method")
+ */
 class RoomRate
 {
     /**
@@ -190,7 +196,12 @@ class RoomRate
      */
     public function setDescription($description)
     {
-        $this->description = $description;
+        $indexedDescription = array();
+        foreach ($description as $text) {
+            $indexedDescription[$text->getLang()] = $text;
+        }
+
+        $this->description = $indexedDescription;
 
         return $this;
     }
@@ -200,7 +211,7 @@ class RoomRate
      */
     public function addDescription(Text $text)
     {
-        $this->description[] = $text;
+        $this->description[$text->getLang()] = $text;
 
         return $this;
     }
@@ -232,5 +243,21 @@ class RoomRate
         }
 
         return $total;
+    }
+
+    public function getDescriptionForLocale($locale)
+    {
+        $defaultValue = '';
+
+        foreach ($this->description as $text) {
+            if ($text->getLang() == $locale) {
+                return $text->getValue();
+            }
+            if ($text->getLang() == 'EN') {
+                $defaultValue = $text->getValue();
+            }
+        }
+
+        return $defaultValue;
     }
 }

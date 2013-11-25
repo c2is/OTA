@@ -5,7 +5,13 @@ namespace C2is\OTA\Model\HotelAvail\Response;
 use JMS\Serializer\Annotation\Type;
 use JMS\Serializer\Annotation\XmlList;
 use JMS\Serializer\Annotation\SerializedName;
+use JMS\Serializer\Annotation\AccessType;
 
+/**
+ * Class HotelAvailExtension
+ * @package C2is\OTA\Model\HotelAvail\Response
+ * @AccessType("public_method")
+ */
 class HotelAvailExtension
 {
     /**

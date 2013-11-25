@@ -5,7 +5,13 @@ namespace C2is\OTA\Model\HotelAvail\Response\Rate;
 use JMS\Serializer\Annotation\Type;
 use JMS\Serializer\Annotation\XmlAttribute;
 use JMS\Serializer\Annotation\SerializedName;
+use JMS\Serializer\Annotation\AccessType;
 
+/**
+ * Class FreeNight
+ * @package C2is\OTA\Model\HotelAvail\Response\Rate
+ * @AccessType("public_method")
+ */
 class FreeNight
 {
     const RATE_FREE_NIGHT_APPLICATION_ONE = 'OneTime';

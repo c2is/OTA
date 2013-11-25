@@ -6,7 +6,13 @@ use C2is\OTA\Model\Common\BasicPropertyInfo;
 use JMS\Serializer\Annotation\Type;
 use JMS\Serializer\Annotation\XmlList;
 use JMS\Serializer\Annotation\SerializedName;
+use JMS\Serializer\Annotation\AccessType;
 
+/**
+ * Class RoomStay
+ * @package C2is\OTA\Model\HotelAvail\Response
+ * @AccessType("public_method")
+ */
 class RoomStay
 {
     /**

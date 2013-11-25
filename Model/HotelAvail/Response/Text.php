@@ -6,7 +6,13 @@ use JMS\Serializer\Annotation\Type;
 use JMS\Serializer\Annotation\XmlAttribute;
 use JMS\Serializer\Annotation\XmlValue;
 use JMS\Serializer\Annotation\SerializedName;
+use JMS\Serializer\Annotation\AccessType;
 
+/**
+ * Class Text
+ * @package C2is\OTA\Model\HotelAvail\Response
+ * @AccessType("public_method")
+ */
 class Text
 {
     /**
