@@ -6,6 +6,7 @@ use JMS\Serializer\Annotation\Type;
 use JMS\Serializer\Annotation\XmlList;
 use JMS\Serializer\Annotation\XmlAttribute;
 use JMS\Serializer\Annotation\SerializedName;
+use JMS\Serializer\Annotation\Accessor;
 
 class Service
 {
@@ -58,20 +59,20 @@ class Service
     private $pricingType;
 
     /**
-     * @SerializedName("isNightRequested")
+     * @SerializedName("NightRequested")
      * @XmlAttribute
      * @Type("boolean")
      * @var boolean
      */
-    private $isNightRequested;
+    private $nightRequested;
 
     /**
-     * @SerializedName("isGuestsRequested")
+     * @SerializedName("PaxRequested")
      * @XmlAttribute
      * @Type("boolean")
      * @var boolean
      */
-    private $isGuestsRequested;
+    private $paxRequested;
 
     /**
      * @SerializedName("Price")
@@ -82,7 +83,7 @@ class Service
 
     /**
      * @SerializedName("Description")
-     * @XmlList(inline=true, entry="Text")
+     * @XmlList(inline=false, entry="Text")
      * @Type("array<C2is\OTA\Model\HotelAvail\Response\Text>")
      * @var array
      */
@@ -197,11 +198,11 @@ class Service
     }
 
     /**
-     * @param boolean $isNightRequested
+     * @param boolean $nightRequested
      */
-    public function setIsNightRequested($isNightRequested)
+    public function setNightRequested($nightRequested)
     {
-        $this->isNightRequested = $isNightRequested;
+        $this->nightRequested = $nightRequested;
 
         return $this;
     }
@@ -209,17 +210,17 @@ class Service
     /**
      * @return boolean
      */
-    public function getIsNightRequested()
+    public function getNightRequested()
     {
-        return $this->isNightRequested;
+        return $this->nightRequested;
     }
 
     /**
-     * @param boolean $isGuestsRequested
+     * @param boolean $paxRequested
      */
-    public function setIsGuestsRequested($isGuestsRequested)
+    public function setPaxRequested($paxRequested)
     {
-        $this->isGuestsRequested = $isGuestsRequested;
+        $this->paxRequested = $paxRequested;
 
         return $this;
     }
@@ -227,9 +228,9 @@ class Service
     /**
      * @return boolean
      */
-    public function getIsGuestsRequested()
+    public function getPaxRequested()
     {
-        return $this->isGuestsRequested;
+        return $this->paxRequested;
     }
 
     /**
