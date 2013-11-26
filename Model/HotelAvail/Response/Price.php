@@ -31,6 +31,13 @@ class Price
     private $base;
 
     /**
+     * @SerializedName("OnSpot")
+     * @Type("C2is\OTA\Model\HotelAvail\Response\OnSpot")
+     * @var \C2is\OTA\Model\HotelAvail\Response\OnSpot
+     */
+    private $onSpot;
+
+    /**
      * @param int $numberOfUnits
      */
     public function setNumberOfUnits($numberOfUnits)
@@ -64,5 +71,23 @@ class Price
     public function getBase()
     {
         return $this->base;
+    }
+
+    /**
+     * @param \C2is\OTA\Model\HotelAvail\Response\OnSpot $onSpot
+     */
+    public function setOnSpot($onSpot)
+    {
+        $this->onSpot = $onSpot;
+
+        return $this;
+    }
+
+    /**
+     * @return \C2is\OTA\Model\HotelAvail\Response\OnSpot
+     */
+    public function getOnSpot()
+    {
+        return $this->onSpot;
     }
 }

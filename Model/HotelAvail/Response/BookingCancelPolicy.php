@@ -142,6 +142,22 @@ class BookingCancelPolicy
         return $this->bookingPolicy;
     }
 
+    public function getBookingPolicyForLocale($locale)
+    {
+        $defaultValue = '';
+
+        foreach ($this->bookingPolicy as $bookingPolicy) {
+            if ($bookingPolicy->getLang() == $locale) {
+                return $bookingPolicy->getValue();
+            }
+            if ($bookingPolicy->getLang() == 'EN') {
+                $defaultValue = $bookingPolicy->getValue();
+            }
+        }
+
+        return $defaultValue;
+    }
+
     /**
      * @param array $cancelPolicy
      */
