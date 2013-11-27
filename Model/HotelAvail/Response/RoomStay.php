@@ -55,8 +55,8 @@ class RoomStay
 
     /**
      * @SerializedName("TPA_Extensions")
-     * @Type("C2is\OTA\Model\HotelAvail\Response\RoomRateExtension")
-     * @var \C2is\OTA\Model\HotelAvail\Response\RoomRateExtension
+     * @Type("C2is\OTA\Model\HotelAvail\Response\RoomStayExtension")
+     * @var \C2is\OTA\Model\HotelAvail\Response\RoomStayExtension
      */
     private $extensions;
 
@@ -152,9 +152,9 @@ class RoomStay
     }
 
     /**
-     * @param \C2is\OTA\Model\HotelAvail\Response\RoomRateExtension $extensions
+     * @param \C2is\OTA\Model\HotelAvail\Response\RoomStayExtension $extensions
      */
-    public function setExtensions(RoomRateExtension $extensions)
+    public function setExtensions(RoomStayExtension $extensions)
     {
         $this->extensions = $extensions;
 
@@ -162,7 +162,7 @@ class RoomStay
     }
 
     /**
-     * @return \C2is\OTA\Model\HotelAvail\Response\RoomRateExtension
+     * @return \C2is\OTA\Model\HotelAvail\Response\RoomStayExtension
      */
     public function getExtensions()
     {

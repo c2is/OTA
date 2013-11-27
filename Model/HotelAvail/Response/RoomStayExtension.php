@@ -8,11 +8,11 @@ use JMS\Serializer\Annotation\SerializedName;
 use JMS\Serializer\Annotation\AccessType;
 
 /**
- * Class RoomRateExtension
+ * Class RoomStayExtension
  * @package C2is\OTA\Model\HotelAvail\Response
  * @AccessType("public_method")
  */
-class RoomRateExtension
+class RoomStayExtension
 {
     /**
      * @SerializedName("Services")
@@ -29,6 +29,13 @@ class RoomRateExtension
      * @var \C2is\OTA\Model\HotelAvail\Response\Occupancy
      */
     private $occupancy;
+
+    /**
+     * @SerializedName("CheckinCheckoutInformation")
+     * @Type("C2is\OTA\Model\HotelAvail\Response\CheckinCheckoutInformation")
+     * @var \C2is\OTA\Model\HotelAvail\Response\CheckinCheckoutInformation
+     */
+    private $checkinInformation;
 
     /**
      * @param array $services
@@ -75,5 +82,23 @@ class RoomRateExtension
     public function getOccupancy()
     {
         return $this->occupancy;
+    }
+
+    /**
+     * @param \C2is\OTA\Model\HotelAvail\Response\CheckinCheckoutInformation $checkinInformation
+     */
+    public function setCheckinInformation($checkinInformation)
+    {
+        $this->checkinInformation = $checkinInformation;
+
+        return $this;
+    }
+
+    /**
+     * @return \C2is\OTA\Model\HotelAvail\Response\CheckinCheckoutInformation
+     */
+    public function getCheckinInformation()
+    {
+        return $this->checkinInformation;
     }
 }

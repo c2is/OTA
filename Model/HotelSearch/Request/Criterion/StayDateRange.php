@@ -29,7 +29,7 @@ class StayDateRange
     public function setStart($start)
     {
         if (!$start instanceof \DateTime) {
-            $start = new \DateTime(sprintf('@%s', strtotime($start)));
+            $start = new \DateTime($start);
         }
         $this->start = $start;
 
@@ -51,7 +51,7 @@ class StayDateRange
     public function setEnd($end)
     {
         if (!$end instanceof \DateTime) {
-            $end = new \DateTime(sprintf('@%s', strtotime($end)));
+            $end = new \DateTime($end);
         }
         $this->end = $end;
 

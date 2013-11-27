@@ -4,8 +4,15 @@ namespace C2is\OTA\Model\Common;
 
 use JMS\Serializer\Annotation\Type;
 use JMS\Serializer\Annotation\XmlAttribute;
+use JMS\Serializer\Annotation\XmlList;
 use JMS\Serializer\Annotation\SerializedName;
+use JMS\Serializer\Annotation\AccessType;
 
+/**
+ * Class Comment
+ * @package C2is\OTA\Model\Common
+ * @AccessType("public_method")
+ */
 class Comment
 {
     /**
@@ -19,15 +26,16 @@ class Comment
     /**
      * @SerializedName("CommentOriginatorCode")
      * @XmlAttribute
-     * @Type("integer")
-     * @var integer
+     * @Type("string")
+     * @var string
      */
     private $originatorCode = 0;
 
     /**
-     * @SerializedName("Text")
-     * @Type("string")
-     * @var string
+     * @SerializedName("Texts")
+     * @XmlList(inline=true, entry="Text")
+     * @Type("array<'C2is\OTA\Model\Common\Text'>")
+     * @var array
      */
     private $text;
 
@@ -73,7 +81,7 @@ class Comment
     }
 
     /**
-     * @param string $text
+     * @param array $text
      */
     public function setText($text)
     {
@@ -83,7 +91,17 @@ class Comment
     }
 
     /**
-     * @return string
+     * @param array $text
+     */
+    public function addText(Text $text)
+    {
+        $this->text[] = $text;
+
+        return $this;
+    }
+
+    /**
+     * @return array
      */
     public function getText()
     {

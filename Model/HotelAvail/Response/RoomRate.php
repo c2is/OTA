@@ -62,7 +62,7 @@ class RoomRate
     /**
      * @SerializedName("RoomRateDescription")
      * @XmlList(inline=false, entry="Text")
-     * @Type("array<C2is\OTA\Model\HotelAvail\Response\Text>")
+     * @Type("array<C2is\OTA\Model\Common\Text>")
      * @var array
      */
     private $description = array();

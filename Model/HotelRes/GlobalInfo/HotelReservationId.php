@@ -34,6 +34,22 @@ class HotelReservationId
     private $type;
 
     /**
+     * @SerializedName("CancelOriginatorCode")
+     * @XmlAttribute
+     * @Type("string")
+     * @var string
+     */
+    private $cancelOriginatorCode;
+
+    /**
+     * @SerializedName("CancellationDate")
+     * @XmlAttribute
+     * @Type("DateTime<'Y-m-d\TH:i:s\Z'>")
+     * @var \DateTime
+     */
+    private $cancellationDate;
+
+    /**
      * @param string $source
      */
     public function setSource($source)
@@ -83,5 +99,41 @@ class HotelReservationId
     public function getType()
     {
         return $this->type;
+    }
+
+    /**
+     * @param string $cancelOriginatorCode
+     */
+    public function setCancelOriginatorCode($cancelOriginatorCode)
+    {
+        $this->cancelOriginatorCode = $cancelOriginatorCode;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCancelOriginatorCode()
+    {
+        return $this->cancelOriginatorCode;
+    }
+
+    /**
+     * @param \DateTime $cancellationDate
+     */
+    public function setCancellationDate($cancellationDate)
+    {
+        $this->cancellationDate = $cancellationDate;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getCancellationDate()
+    {
+        return $this->cancellationDate;
     }
 }

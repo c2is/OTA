@@ -4,39 +4,39 @@ namespace C2is\OTA\Model\HotelAvail\Response;
 
 use JMS\Serializer\Annotation\Type;
 use JMS\Serializer\Annotation\XmlAttribute;
-use JMS\Serializer\Annotation\XmlValue;
+use JMS\Serializer\Annotation\XmlList;
 use JMS\Serializer\Annotation\SerializedName;
 use JMS\Serializer\Annotation\AccessType;
 
 /**
- * Class Text
+ * Class CheckinCheckoutInformation
  * @package C2is\OTA\Model\HotelAvail\Response
  * @AccessType("public_method")
  */
-class Text
+class CheckinCheckoutInformation
 {
     /**
-     * @SerializedName("Language")
+     * @SerializedName("Checkin")
      * @XmlAttribute
      * @Type("string")
      * @var string
      */
-    private $lang;
+    private $checkin;
 
     /**
-     * @SerializedName("Value")
-     * @XmlValue
+     * @SerializedName("Checkout")
+     * @XmlAttribute
      * @Type("string")
      * @var string
      */
-    private $value;
+    private $checkout;
 
     /**
-     * @param string $lang
+     * @param string $checkin
      */
-    public function setLang($lang)
+    public function setCheckin($checkin)
     {
-        $this->lang = $lang;
+        $this->checkin = $checkin;
 
         return $this;
     }
@@ -44,17 +44,17 @@ class Text
     /**
      * @return string
      */
-    public function getLang()
+    public function getCheckin()
     {
-        return $this->lang;
+        return $this->checkin;
     }
 
     /**
-     * @param string $value
+     * @param string $checkout
      */
-    public function setValue($value)
+    public function setCheckout($checkout)
     {
-        $this->value = $value;
+        $this->checkout = $checkout;
 
         return $this;
     }
@@ -62,8 +62,8 @@ class Text
     /**
      * @return string
      */
-    public function getValue()
+    public function getCheckout()
     {
-        return $this->value;
+        return $this->checkout;
     }
 }

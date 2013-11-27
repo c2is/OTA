@@ -1,79 +1,102 @@
 <?php
 
-namespace C2is\OTA\Model\HotelRes;
+namespace C2is\OTA\Model\HotelResNotif;
 
 use C2is\OTA\Exception\InvalidParameterException;
 use C2is\OTA\Model\Common\BookingChannel;
 use C2is\OTA\Model\Common\Pos;
-use JMS\Serializer\Annotation\Type;
-use JMS\Serializer\Annotation\Exclude;
-use JMS\Serializer\Annotation\XmlAttribute;
-use JMS\Serializer\Annotation\XmlList;
-use JMS\Serializer\Annotation\SerializedName;
-use JMS\Serializer\Annotation\XmlRoot;
+use C2is\OTA\Model\HotelRes\HotelReservation;
+use JMS\Serializer\Annotation as DI;
 
-/** @XmlRoot("OTA_HotelResRQ") */
+/** @DI\XmlRoot("OTA_HotelResNotifRQ") */
 class HotelResNotif
 {
     const RESERVATION_STATUS_CREATE = 'Initiate';
 
     const RESERVATION_STATUS_EDIT = 'Modify';
 
+    const RESERVATION_STATUS_HOLD = 'Hold';
+
+    const RESERVATION_STATUS_COMMIT = 'Commit';
+
+    const RESERVATION_STATUS_IGNORE = 'Ignore';
+
     /**
-     * @Exclude
+     * @DI\Exclude
      * @var array
      */
     public static $allowedStatus = array(
         self::RESERVATION_STATUS_CREATE,
         self::RESERVATION_STATUS_EDIT,
-        'Hold',
-        'Commit',
-        'Ignore'
+        self::RESERVATION_STATUS_HOLD,
+        self::RESERVATION_STATUS_COMMIT,
+        self::RESERVATION_STATUS_IGNORE,
     );
 
     /**
-     * @SerializedName("EchoToken")
-     * @XmlAttribute
-     * @Type("string")
+     * @DI\SerializedName("EchoToken")
+     * @DI\XmlAttribute
+     * @DI\Type("string")
      * @var string
      */
     private $echoToken;
 
     /**
-     * @SerializedName("Version")
-     * @XmlAttribute
-     * @Type("string")
+     * @DI\SerializedName("PrimaryLangID")
+     * @DI\XmlAttribute
+     * @DI\Type("string")
+     */
+    private $lang;
+
+    /**
+     * @DI\SerializedName("Target")
+     * @DI\XmlAttribute
+     * @DI\Type("string")
+     */
+    private $target = 'Test';
+
+    /**
+     * @DI\SerializedName("TimeStamp")
+     * @DI\XmlAttribute
+     * @DI\Type("string")
+     */
+    private $timestamp;
+
+    /**
+     * @DI\SerializedName("Version")
+     * @DI\XmlAttribute
+     * @DI\Type("string")
      * @var string
      */
     private $version;
 
     /**
-     * @SerializedName("xmlns")
-     * @XmlAttribute
-     * @Type("string")
+     * @DI\SerializedName("xmlns")
+     * @DI\XmlAttribute
+     * @DI\Type("string")
      * @var string
      */
     private $xmlns;
 
     /**
-     * @SerializedName("ResStatus")
-     * @XmlAttribute
-     * @Type("string")
+     * @DI\SerializedName("ResStatus")
+     * @DI\XmlAttribute
+     * @DI\Type("string")
      * @var string
      */
     private $status;
 
     /**
-     * @SerializedName("POS")
-     * @Type("C2is\OTA\Model\Common\Pos")
+     * @DI\SerializedName("POS")
+     * @DI\Type("C2is\OTA\Model\Common\Pos")
      * @var Pos
      */
     private $pos;
 
     /**
-     * @SerializedName("HotelReservations")
-     * @XmlList(inline=false, entry="HotelReservation")
-     * @Type("array<C2is\OTA\Model\HotelRes\HotelReservation>")
+     * @DI\SerializedName("HotelReservations")
+     * @DI\XmlList(inline=false, entry="HotelReservation")
+     * @DI\Type("array<C2is\OTA\Model\HotelRes\HotelReservation>")
      * @var HotelReservations
      */
     private $reservations = array();
@@ -103,6 +126,36 @@ class HotelResNotif
     public function getEchoToken()
     {
         return $this->echoToken;
+    }
+
+    public function setLang($lang)
+    {
+        $this->lang = $lang;
+    }
+
+    public function getLang()
+    {
+        return $this->lang;
+    }
+
+    public function setTarget($target)
+    {
+        $this->target = $target;
+    }
+
+    public function getTarget()
+    {
+        return $this->target;
+    }
+
+    public function setTimestamp($timestamp)
+    {
+        $this->timestamp = $timestamp;
+    }
+
+    public function getTimestamp()
+    {
+        return $this->timestamp;
     }
 
     /**

@@ -42,7 +42,7 @@ class BookingCancelPolicy
     /**
      * @SerializedName("BookingPolicy")
      * @XmlList(inline=false, entry="Text")
-     * @Type("array<C2is\OTA\Model\HotelAvail\Response\Text>")
+     * @Type("array<C2is\OTA\Model\Common\Text>")
      * @var array
      */
     private $bookingPolicy = array();
@@ -50,7 +50,7 @@ class BookingCancelPolicy
     /**
      * @SerializedName("CancelPolicy")
      * @XmlList(inline=false, entry="Text")
-     * @Type("array<C2is\OTA\Model\HotelAvail\Response\Text>")
+     * @Type("array<C2is\OTA\Model\Common\Text>")
      * @var array
      */
     private $cancelPolicy = array();

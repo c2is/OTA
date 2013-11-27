@@ -30,10 +30,10 @@ use C2is\OTA\Model\Common\Total;
 use JMS\Serializer\SerializerBuilder;
 
 /**
- * Class HotelRes
+ * Class HotelResNotif
  * @package Seh\Bundle\ReservitBundle\OTA
  */
-class HotelRes extends AbstractMessage
+class HotelResNotif extends AbstractMessage
 {
     public function getName()
     {
@@ -50,7 +50,7 @@ class HotelRes extends AbstractMessage
 
     protected function generateXml()
     {
-        $hotelRes = new \C2is\OTA\Model\HotelRes\HotelRes();
+        $hotelRes = new \C2is\OTA\Model\HotelResNotif\HotelResNotif();
         $hotelRes->setEchoToken($this->getParam('echo'));
         $hotelRes->setTimestamp($this->getParam('timestamp'));
         $hotelRes->setRequestorId($this->getParam('requestor.id'));
@@ -73,107 +73,109 @@ class HotelRes extends AbstractMessage
                 $hotelReservation->setLastModifyDateTime(new \DateTime());
             }
 
-            foreach ($reservation['room_stays'] as $roomStay) {
-                $hotelReservation->addRoomStay($objRoomStay = new RoomStay());
-                foreach ($roomStay['room_types'] as $roomType) {
-                    $objRoomStay->addRoomType($objRoomType = new RoomType());
-                    $objRoomType->setCode($roomType['code']);
-                    $objRoomType->setNumberOfUnits($roomType['number_of_units']);
-                }
+            if (isset($reservation['room_stays'])) {
+                foreach ($reservation['room_stays'] as $roomStay) {
+                    $hotelReservation->addRoomStay($objRoomStay = new RoomStay());
+                    foreach ($roomStay['room_types'] as $roomType) {
+                        $objRoomStay->addRoomType($objRoomType = new RoomType());
+                        $objRoomType->setCode($roomType['code']);
+                        $objRoomType->setNumberOfUnits($roomType['number_of_units']);
+                    }
 
-                if (isset($roomStay['room_rates'])) {
-                    foreach ($roomStay['room_rates'] as $roomRate) {
-                        $objRoomStay->addRoomRate($objRoomRate = new RoomRate());
-                        $objRoomRate->setNumberOfUnits($roomRate['number_of_units']);
-                        if ($roomRate['rate_plan_category'] != 'RAC') {
-                            $objRoomRate->setCode($roomRate['rate_plan_code']);
-                        }
-                        $objRoomRate->setCategory($roomRate['rate_plan_category']);
-                        $objRoomRate->setStartDate($roomRate['start_date']);
-                        $objRoomRate->setEndDate($roomRate['end_date']);
+                    if (isset($roomStay['room_rates'])) {
+                        foreach ($roomStay['room_rates'] as $roomRate) {
+                            $objRoomStay->addRoomRate($objRoomRate = new RoomRate());
+                            $objRoomRate->setNumberOfUnits($roomRate['number_of_units']);
+                            if ($roomRate['rate_plan_category'] != 'RAC') {
+                                $objRoomRate->setCode($roomRate['rate_plan_code']);
+                            }
+                            $objRoomRate->setCategory($roomRate['rate_plan_category']);
+                            $objRoomRate->setStartDate($roomRate['start_date']);
+                            $objRoomRate->setEndDate($roomRate['end_date']);
 
-                        foreach ($roomRate['rates'] as $rate) {
-                            $objRoomRate->addRate($objRate = new Rate());
-                            $objRate->setEffectiveDate($rate['start_date']);
-                            $objRate->setExpireDate($rate['end_date']);
+                            foreach ($roomRate['rates'] as $rate) {
+                                $objRoomRate->addRate($objRate = new Rate());
+                                $objRate->setEffectiveDate($rate['start_date']);
+                                $objRate->setExpireDate($rate['end_date']);
 
-                            $objRate->setBase($objBase = new Base());
-                            $base = $rate['base'];
-                            $objBase->setAmountAfterTax($base['after_tax']);
-                            $objBase->setAmountBeforeTax($base['before_tax']);
-                            $objBase->setCurrency($base['currency']);
+                                $objRate->setBase($objBase = new Base());
+                                $base = $rate['base'];
+                                $objBase->setAmountAfterTax($base['after_tax']);
+                                $objBase->setAmountBeforeTax($base['before_tax']);
+                                $objBase->setCurrency($base['currency']);
 
-                            if (isset($rate['extensions'])) {
-                                $objBase->setExtensions($objExtensions = new Extensions());
-                                $objExtensions->setRedeemedNights($objRedeemedNights = new RedeemedNights());
-                                $extensions = $rate['extensions'];
+                                if (isset($rate['extensions'])) {
+                                    $objBase->setExtensions($objExtensions = new Extensions());
+                                    $objExtensions->setRedeemedNights($objRedeemedNights = new RedeemedNights());
+                                    $extensions = $rate['extensions'];
 
-                                $objRedeemedNights->setProgramId($extensions['program_id']);
-                                foreach ($extensions['nights'] as $night) {
-                                    $objRedeemedNights->addRedeemedNight($objRedeemedNight = new RedeemedNight());
-                                    $objRedeemedNight->setDate($night['date']);
+                                    $objRedeemedNights->setProgramId($extensions['program_id']);
+                                    foreach ($extensions['nights'] as $night) {
+                                        $objRedeemedNights->addRedeemedNight($objRedeemedNight = new RedeemedNight());
+                                        $objRedeemedNight->setDate($night['date']);
+                                    }
                                 }
                             }
                         }
                     }
-                }
 
-                foreach ($roomStay['guest_counts'] as $guestCount) {
-                    $objRoomStay->addGuestCount($objGuestCount = new GuestCount());
-                    if (isset($guestCount['age'])) {
-                        $objGuestCount->setAge($guestCount['age']);
+                    foreach ($roomStay['guest_counts'] as $guestCount) {
+                        $objRoomStay->addGuestCount($objGuestCount = new GuestCount());
+                        if (isset($guestCount['age'])) {
+                            $objGuestCount->setAge($guestCount['age']);
+                        }
+                        $objGuestCount->setAgeCode($guestCount['age_code']);
+                        $objGuestCount->setCount($guestCount['count']);
                     }
-                    $objGuestCount->setAgeCode($guestCount['age_code']);
-                    $objGuestCount->setCount($guestCount['count']);
-                }
 
-                if (isset($roomStay['timespan'])) {
-                    $objRoomStay->setTimespan($objTimespan = new Timespan());
-                    $objTimespan->setStart($roomStay['timespan']['start']);
-                    $objTimespan->setEnd($roomStay['timespan']['end']);
-                }
+                    if (isset($roomStay['timespan'])) {
+                        $objRoomStay->setTimespan($objTimespan = new Timespan());
+                        $objTimespan->setStart($roomStay['timespan']['start']);
+                        $objTimespan->setEnd($roomStay['timespan']['end']);
+                    }
 
-                if (isset($roomStay['total'])) {
-                    $objRoomStay->setTotal($objTotal = new Total());
-                    $objTotal->setBeforeTax($roomStay['total']['before_tax']);
-                    $objTotal->setAfterTax($roomStay['total']['after_tax']);
-                    $objTotal->setCurrency($roomStay['total']['currency']);
+                    if (isset($roomStay['total'])) {
+                        $objRoomStay->setTotal($objTotal = new Total());
+                        $objTotal->setBeforeTax($roomStay['total']['before_tax']);
+                        $objTotal->setAfterTax($roomStay['total']['after_tax']);
+                        $objTotal->setCurrency($roomStay['total']['currency']);
 
-                    if (isset($roomStay['total']['taxes'])) {
-                        $taxes = $roomStay['total']['taxes'];
-                        $objTotal->setTaxes($objTaxes = new Taxes());
-                        $objTaxes->setAmount($taxes['amount']);
-                        $objTaxes->setCurrency($taxes['currency']);
+                        if (isset($roomStay['total']['taxes'])) {
+                            $taxes = $roomStay['total']['taxes'];
+                            $objTotal->setTaxes($objTaxes = new Taxes());
+                            $objTaxes->setAmount($taxes['amount']);
+                            $objTaxes->setCurrency($taxes['currency']);
 
-                        foreach ($taxes['taxes'] as $tax) {
-                            $objTaxes->addTax($objTax = new Tax());
-                            $objTax->setPercent($tax['percent']);
-                            if (isset($tax['amount'])) {
-                                $objTax->setAmount($tax['amount']);
-                            }
+                            foreach ($taxes['taxes'] as $tax) {
+                                $objTaxes->addTax($objTax = new Tax());
+                                $objTax->setPercent($tax['percent']);
+                                if (isset($tax['amount'])) {
+                                    $objTax->setAmount($tax['amount']);
+                                }
 
-                            if (isset($tax['description'])) {
-                                foreach ($tax['description'] as $lang => $description) {
-                                    $objTax->addDescription($objDescription = new TaxDescription());
-                                    $objDescription->setDescription($description);
-                                    $objDescription->setLanguage($lang);
+                                if (isset($tax['description'])) {
+                                    foreach ($tax['description'] as $lang => $description) {
+                                        $objTax->addDescription($objDescription = new TaxDescription());
+                                        $objDescription->setDescription($description);
+                                        $objDescription->setLanguage($lang);
+                                    }
                                 }
                             }
                         }
                     }
-                }
 
-                if (isset($roomStay['hotel'])) {
-                    $objBasicPropertyInfo = $objRoomStay->getBasicPropertyInfo();
-                    $objBasicPropertyInfo->setChainCode($roomStay['hotel']['chain_code']);
-                    $objBasicPropertyInfo->setHotelCode($roomStay['hotel']['code']);
-                }
+                    if (isset($roomStay['hotel'])) {
+                        $objBasicPropertyInfo = $objRoomStay->getBasicPropertyInfo();
+                        $objBasicPropertyInfo->setChainCode($roomStay['hotel']['chain_code']);
+                        $objBasicPropertyInfo->setHotelCode($roomStay['hotel']['code']);
+                    }
 
-                if (isset($roomStay['services'])) {
-                    foreach ($roomStay['services'] as $service) {
-                        $objRoomStay->addServiceRph($objServiceRph = new ServiceRph());
-                        $objServiceRph->setIsPerRoom($service['per_room']);
-                        $objServiceRph->setRph($service['rph']);
+                    if (isset($roomStay['services'])) {
+                        foreach ($roomStay['services'] as $service) {
+                            $objRoomStay->addServiceRph($objServiceRph = new ServiceRph());
+                            $objServiceRph->setIsPerRoom($service['per_room']);
+                            $objServiceRph->setRph($service['rph']);
+                        }
                     }
                 }
             }
@@ -315,7 +317,13 @@ class HotelRes extends AbstractMessage
                         $objGlobalInfo->addHotelReservationId($objHotelReservationId = new HotelReservationId());
                         $objHotelReservationId->setSource($hotelReservationId['source']);
                         $objHotelReservationId->setValue($hotelReservationId['value']);
-                        $objHotelReservationId->setType($hotelReservationId['type']);
+                        if (isset($hotelReservationId['type'])) {
+                            $objHotelReservationId->setType($hotelReservationId['type']);
+                        }
+                        if (isset($hotelReservationId['cancel']) and $hotelReservationId['cancel']) {
+                            $objHotelReservationId->setCancelOriginatorCode($this->getParam('requestor.id'));
+                            $objHotelReservationId->setCancellationDate(new \DateTime());
+                        }
                     }
                 }
 
