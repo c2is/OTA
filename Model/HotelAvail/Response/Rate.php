@@ -236,4 +236,20 @@ class Rate
     {
         return $this->extensions;
     }
+
+    public function getDescriptionForLocale($locale)
+    {
+        $defaultValue = '';
+
+        foreach ($this->description as $text) {
+            if ($text->getLang() == $locale) {
+                return $text->getValue();
+            }
+            if ($text->getLang() == 'EN') {
+                $defaultValue = $text->getValue();
+            }
+        }
+
+        return $defaultValue;
+    }
 }
