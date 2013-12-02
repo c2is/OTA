@@ -96,6 +96,13 @@ class Service
     private $description = array();
 
     /**
+     * @SerializedName("Details")
+     * @Type("C2is\OTA\Model\HotelAvail\Response\ServiceDetails")
+     * @var \C2is\OTA\Model\HotelAvail\Response\ServiceDetails
+     */
+    private $details;
+
+    /**
      * @param boolean $inclusive
      */
     public function setInclusive($inclusive)
@@ -283,6 +290,24 @@ class Service
     public function getDescription()
     {
         return $this->description;
+    }
+
+    /**
+     * @param \C2is\OTA\Model\HotelAvail\Response\ServiceDetails $details
+     */
+    public function setDetails($details)
+    {
+        $this->details = $details;
+
+        return $this;
+    }
+
+    /**
+     * @return \C2is\OTA\Model\HotelAvail\Response\ServiceDetails
+     */
+    public function getDetails()
+    {
+        return $this->details;
     }
 
     public function getDescriptionForLocale($locale)
