@@ -118,13 +118,15 @@ class HotelRes extends AbstractMessage
                     }
                 }
 
-                foreach ($roomStay['guest_counts'] as $guestCount) {
-                    $objRoomStay->addGuestCount($objGuestCount = new GuestCount());
-                    if (isset($guestCount['age'])) {
-                        $objGuestCount->setAge($guestCount['age']);
+                if (isset($roomStay['guest_counts'])) {
+                    foreach ($roomStay['guest_counts'] as $guestCount) {
+                        $objRoomStay->addGuestCount($objGuestCount = new GuestCount());
+                        if (isset($guestCount['age'])) {
+                            $objGuestCount->setAge($guestCount['age']);
+                        }
+                        $objGuestCount->setAgeCode($guestCount['age_code']);
+                        $objGuestCount->setCount($guestCount['count']);
                     }
-                    $objGuestCount->setAgeCode($guestCount['age_code']);
-                    $objGuestCount->setCount($guestCount['count']);
                 }
 
                 if (isset($roomStay['timespan'])) {
@@ -135,7 +137,9 @@ class HotelRes extends AbstractMessage
 
                 if (isset($roomStay['total'])) {
                     $objRoomStay->setTotal($objTotal = new Total());
-                    $objTotal->setBeforeTax($roomStay['total']['before_tax']);
+                    if (isset($roomStay['total']['before_tax'])) {
+                        $objTotal->setBeforeTax($roomStay['total']['before_tax']);
+                    }
                     $objTotal->setAfterTax($roomStay['total']['after_tax']);
                     $objTotal->setCurrency($roomStay['total']['currency']);
 
@@ -231,9 +235,15 @@ class HotelRes extends AbstractMessage
 
                     if (isset($guest['address'])) {
                         $objCustomer->setAddress($objAddress = new Guest\Address());
-                        $objAddress->setLine($guest['address']['line']);
-                        $objAddress->setCity($guest['address']['city']);
-                        $objAddress->setPostalCode($guest['address']['postal_code']);
+                        if (isset($guest['address']['line'])) {
+                            $objAddress->setLine($guest['address']['line']);
+                        }
+                        if (isset($guest['address']['city'])) {
+                            $objAddress->setCity($guest['address']['city']);
+                        }
+                        if (isset($guest['address']['postal_code'])) {
+                            $objAddress->setPostalCode($guest['address']['postal_code']);
+                        }
                         if (isset($guest['address']['country'])) {
                             $objAddress->setCountryName($guest['address']['country']['name']);
                             $objAddress->setCountryCode($guest['address']['country']['code']);
@@ -296,7 +306,9 @@ class HotelRes extends AbstractMessage
                 if (isset($globalInfo['total'])) {
                     $objGlobalInfo->setTotal($objTotal = new Total());
                     $objTotal->setAfterTax($globalInfo['total']['after_tax']);
-                    $objTotal->setBeforeTax($globalInfo['total']['before_tax']);
+                    if (isset($globalInfo['total']['before_tax'])) {
+                        $objTotal->setBeforeTax($globalInfo['total']['before_tax']);
+                    }
                     if (isset($globalInfo['total']['currency'])) {
                         $objTotal->setCurrency($globalInfo['total']['currency']);
                     }
@@ -315,7 +327,9 @@ class HotelRes extends AbstractMessage
                         $objGlobalInfo->addHotelReservationId($objHotelReservationId = new HotelReservationId());
                         $objHotelReservationId->setSource($hotelReservationId['source']);
                         $objHotelReservationId->setValue($hotelReservationId['value']);
-                        $objHotelReservationId->setType($hotelReservationId['type']);
+                        if (isset($hotelReservationId['type'])) {
+                            $objHotelReservationId->setType($hotelReservationId['type']);
+                        }
                     }
                 }
 

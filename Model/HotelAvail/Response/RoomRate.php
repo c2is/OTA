@@ -85,7 +85,7 @@ class RoomRate
      */
     public function getStartDate()
     {
-        return $this->startDate->format('Y-m-d');
+        return $this->startDate instanceof \DateTime ? $this->startDate->format('Y-m-d') : $this->startDate;
     }
 
     /**
@@ -106,7 +106,7 @@ class RoomRate
      */
     public function getEndDate()
     {
-        return $this->endDate->format('Y-m-d');
+        return $this->endDate instanceof \DateTime ? $this->endDate->format('Y-m-d') : $this->endDate;
     }
 
     /**
