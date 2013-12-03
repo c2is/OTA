@@ -4,6 +4,7 @@ namespace C2is\OTA\Model\HotelRes;
 
 use C2is\OTA\Exception\InvalidParameterException;
 use C2is\OTA\Model\Common\BookingChannel;
+use C2is\OTA\Model\Common\Error;
 use C2is\OTA\Model\Common\Pos;
 use JMS\Serializer\Annotation\Type;
 use JMS\Serializer\Annotation\Exclude;
@@ -101,9 +102,17 @@ class HotelRes
      * @SerializedName("HotelReservations")
      * @XmlList(inline=false, entry="HotelReservation")
      * @Type("array<C2is\OTA\Model\HotelRes\HotelReservation>")
-     * @var HotelReservations
+     * @var array
      */
     private $reservations = array();
+
+    /**
+     * @SerializedName("Errors")
+     * @XmlList(inline=false, entry="Error")
+     * @Type("array<C2is\OTA\Model\Common\Error>")
+     * @var array
+     */
+    private $errors = array();
 
     /**
      * Constructor.
@@ -336,5 +345,33 @@ class HotelRes
     public function getReservations()
     {
         return $this->reservations;
+    }
+
+    /**
+     * @param array $errors
+     */
+    public function setErrors($errors)
+    {
+        $this->errors = $errors;
+
+        return $this;
+    }
+
+    /**
+     * @param array $error
+     */
+    public function addError(Error $error)
+    {
+        $this->errors[] = $error;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getErrors()
+    {
+        return $this->errors;
     }
 }
