@@ -6,7 +6,13 @@ use JMS\Serializer\Annotation\Type;
 use JMS\Serializer\Annotation\XmlAttribute;
 use JMS\Serializer\Annotation\XmlList;
 use JMS\Serializer\Annotation\SerializedName;
+use JMS\Serializer\Annotation\AccessType;
 
+/**
+ * Class HotelReservation
+ * @package C2is\OTA\Model\HotelRes
+ * @AccessType("public_method")
+ */
 class HotelReservation
 {
     /**
@@ -20,7 +26,7 @@ class HotelReservation
     /**
      * @SerializedName("CreateDateTime")
      * @XmlAttribute
-     * @Type("DateTime<'Y-m-d\TH:i:s\Z'>")
+     * @Type("string")
      * @var string
      */
     private $createDateTime;
@@ -28,7 +34,7 @@ class HotelReservation
     /**
      * @SerializedName("LastModifyDateTime")
      * @XmlAttribute
-     * @Type("DateTime<'Y-m-d\TH:i:s\Z'>")
+     * @Type("string")
      * @var string
      */
     private $lastModifyDateTime;
@@ -77,6 +83,9 @@ class HotelReservation
      */
     public function setCreateDateTime($createDateTime)
     {
+        if (!$createDateTime instanceof \DateTime) {
+            $createDateTime = new \DateTime($createDateTime);
+        }
         $this->createDateTime = $createDateTime;
 
         return $this;
@@ -87,7 +96,7 @@ class HotelReservation
      */
     public function getCreateDateTime()
     {
-        return $this->createDateTime;
+        return $this->createDateTime instanceof \DateTime ? $this->createDateTime->format('Y-m-d\TH:i:s\Z') : $this->createDateTime;
     }
 
     /**
@@ -113,6 +122,9 @@ class HotelReservation
      */
     public function setLastModifyDateTime($lastModifyDateTime)
     {
+        if (!$lastModifyDateTime instanceof \DateTime) {
+            $lastModifyDateTime = new \DateTime($lastModifyDateTime);
+        }
         $this->lastModifyDateTime = $lastModifyDateTime;
 
         return $this;
@@ -123,7 +135,7 @@ class HotelReservation
      */
     public function getLastModifyDateTime()
     {
-        return $this->lastModifyDateTime;
+        return $this->lastModifyDateTime instanceof \DateTime ? $this->lastModifyDateTime->format('Y-m-d\TH:i:s\Z') : $this->lastModifyDateTime;
     }
 
     /**

@@ -5,13 +5,19 @@ namespace C2is\OTA\Model\Common;
 use JMS\Serializer\Annotation\Type;
 use JMS\Serializer\Annotation\XmlAttribute;
 use JMS\Serializer\Annotation\SerializedName;
+use JMS\Serializer\Annotation\AccessType;
 
+/**
+ * Class Timespan
+ * @package C2is\OTA\Model\Common
+ * @AccessType("public_method")
+ */
 class Timespan
 {
     /**
      * @SerializedName("Start")
      * @XmlAttribute
-     * @Type("DateTime<'Y-m-d\TH:i:s\Z'>")
+     * @Type("string")
      * @var \DateTime
      */
     private $start;
@@ -19,7 +25,7 @@ class Timespan
     /**
      * @SerializedName("End")
      * @XmlAttribute
-     * @Type("DateTime<'Y-m-d\TH:i:s\Z'>")
+     * @Type("string")
      * @var \DateTime
      */
     private $end;
@@ -43,7 +49,7 @@ class Timespan
      */
     public function getStart()
     {
-        return $this->start;
+        return $this->start instanceof \DateTime ? $this->start->format('Y-m-d\TH:i:s\Z') : $this->start;
     }
 
     /**
@@ -65,6 +71,6 @@ class Timespan
      */
     public function getEnd()
     {
-        return $this->end;
+        return $this->end instanceof \DateTime ? $this->end->format('Y-m-d\TH:i:s\Z') : $this->end;
     }
 }

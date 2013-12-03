@@ -34,7 +34,7 @@ class Comment
     /**
      * @SerializedName("Texts")
      * @XmlList(inline=true, entry="Text")
-     * @Type("array<'C2is\OTA\Model\Common\Text'>")
+     * @Type("array<C2is\OTA\Model\Common\Text>")
      * @var array
      */
     private $text;
