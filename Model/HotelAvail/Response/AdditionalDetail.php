@@ -24,8 +24,8 @@ class AdditionalDetail
     private $type;
 
     /**
-     * @SerializedName("DetailDescription")
-     * @XmlList
+     * @SerializedName("DetailDescriptions")
+     * @XmlList(inline=true, entry="DetailDescription")
      * @Type("array<C2is\OTA\Model\HotelAvail\Response\DetailDescription>")
      * @var array
      */
