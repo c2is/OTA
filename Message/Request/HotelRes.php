@@ -97,21 +97,27 @@ class HotelRes extends AbstractMessage
                             $objRate->setEffectiveDate($rate['start_date']);
                             $objRate->setExpireDate($rate['end_date']);
 
-                            $objRate->setBase($objBase = new Base());
-                            $base = $rate['base'];
-                            $objBase->setAmountAfterTax($base['after_tax']);
-                            $objBase->setAmountBeforeTax($base['before_tax']);
-                            $objBase->setCurrency($base['currency']);
+                            if (isset($rate['base'])) {
+                                $objRate->setBase($objBase = new Base());
+                                $base = $rate['base'];
+                                $objBase->setAmountAfterTax($base['after_tax']);
+                                if (isset($base['before_tax'])) {
+                                    $objBase->setAmountBeforeTax($base['before_tax']);
+                                }
+                                if (isset($base['currency'])) {
+                                    $objBase->setCurrency($base['currency']);
+                                }
 
-                            if (isset($rate['extensions'])) {
-                                $objBase->setExtensions($objExtensions = new Extensions());
-                                $objExtensions->setRedeemedNights($objRedeemedNights = new RedeemedNights());
-                                $extensions = $rate['extensions'];
+                                if (isset($rate['extensions'])) {
+                                    $objBase->setExtensions($objExtensions = new Extensions());
+                                    $objExtensions->setRedeemedNights($objRedeemedNights = new RedeemedNights());
+                                    $extensions = $rate['extensions'];
 
-                                $objRedeemedNights->setProgramId($extensions['program_id']);
-                                foreach ($extensions['nights'] as $night) {
-                                    $objRedeemedNights->addRedeemedNight($objRedeemedNight = new RedeemedNight());
-                                    $objRedeemedNight->setDate($night['date']);
+                                    $objRedeemedNights->setProgramId($extensions['program_id']);
+                                    foreach ($extensions['nights'] as $night) {
+                                        $objRedeemedNights->addRedeemedNight($objRedeemedNight = new RedeemedNight());
+                                        $objRedeemedNight->setDate($night['date']);
+                                    }
                                 }
                             }
                         }
@@ -141,7 +147,9 @@ class HotelRes extends AbstractMessage
                         $objTotal->setBeforeTax($roomStay['total']['before_tax']);
                     }
                     $objTotal->setAfterTax($roomStay['total']['after_tax']);
-                    $objTotal->setCurrency($roomStay['total']['currency']);
+                    if (isset($roomStay['total']['currency'])) {
+                        $objTotal->setCurrency($roomStay['total']['currency']);
+                    }
 
                     if (isset($roomStay['total']['taxes'])) {
                         $taxes = $roomStay['total']['taxes'];
@@ -190,16 +198,18 @@ class HotelRes extends AbstractMessage
                     $objService->setPricingType($service['pricing_type']);
                     $objService->setQuantity($service['quantity']);
 
-                    $amount = $service['amount'];
-                    $objBase = $objService->getPrice()->getBase();
-                    if (isset($amount['after_tax'])) {
-                        $objBase->setAfterTax($amount['after_tax']);
-                    }
-                    if (isset($amount['before_tax'])) {
-                        $objBase->setBeforeTax($amount['before_tax']);
-                    }
-                    if (isset($amount['currency'])) {
-                        $objBase->setCurrency($amount['currency']);
+                    if (isset($service['amount'])) {
+                        $amount = $service['amount'];
+                        $objBase = $objService->getPrice()->getBase();
+                        if (isset($amount['after_tax'])) {
+                            $objBase->setAfterTax($amount['after_tax']);
+                        }
+                        if (isset($amount['before_tax'])) {
+                            $objBase->setBeforeTax($amount['before_tax']);
+                        }
+                        if (isset($amount['currency'])) {
+                            $objBase->setCurrency($amount['currency']);
+                        }
                     }
 
                     if (in_array($objService->getPricingType(), array(Service::PRICING_TYPE_PER_NIGHT, Service::PRICING_TYPE_PER_PERSON_PER_NIGHT)) and isset($service['details'])) {
@@ -224,7 +234,9 @@ class HotelRes extends AbstractMessage
 
                     $objGuest->addCustomer($objCustomer = new Guest\Customer());
                     $objCustomer->setEmail($guest['email']);
-                    $objCustomer->setCurrency($guest['currency']);
+                    if (isset($guest['currency'])) {
+                        $objCustomer->setCurrency($guest['currency']);
+                    }
                     $objCustomer->setGender($guest['gender']);
 
                     if (isset($guest['person_name'])) {

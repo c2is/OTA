@@ -30,7 +30,7 @@ class Base
      * @Type("string")
      * @var string
      */
-    private $currency = 'EUR';
+    private $currency;
 
     /**
      * @SerializedName("Taxes")
