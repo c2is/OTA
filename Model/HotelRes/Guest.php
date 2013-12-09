@@ -82,7 +82,8 @@ class Guest
      */
     public function addCustomer(Customer $customer)
     {
-        $this->profiles[] = new ProfileInfo(new Profile($customer));
+        $this->profiles[] = new ProfileInfo($profile = new Profile());
+        $profile->setCustomer($customer);
 
         return $this;
     }

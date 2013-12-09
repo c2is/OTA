@@ -24,19 +24,6 @@ class Profile
     private $customer;
 
     /**
-     * @SerializedName("TPA_Extensions")
-     * @Type("C2is\OTA\Model\HotelRes\Guest\Extensions")
-     * @var Extensions
-     */
-    private $extensions;
-
-    public function __construct(Customer $customer)
-    {
-        $this->customer = $customer;
-        $this->extensions = new Extensions();
-    }
-
-    /**
      * @param int $type
      */
     public function setType($type)

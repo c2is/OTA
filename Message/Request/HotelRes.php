@@ -293,6 +293,10 @@ class HotelRes extends AbstractMessage
                             }
                         }
                     }
+
+                    if (isset($guest['lang'])) {
+                        $objCustomer->setLang($guest['lang']);
+                    }
                 }
             }
 

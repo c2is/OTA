@@ -61,6 +61,13 @@ class Customer
     private $loyalty;
 
     /**
+     * @SerializedName("TPA_Extensions")
+     * @Type("C2is\OTA\Model\HotelRes\Guest\Extensions")
+     * @var Extensions
+     */
+    private $extensions;
+
+    /**
      * @param string $currency
      */
     public function setCurrency($currency)
@@ -184,5 +191,36 @@ class Customer
     public function getLoyalty()
     {
         return $this->loyalty;
+    }
+
+    /**
+     * @param \C2is\OTA\Model\HotelRes\Guest\Extensions $extensions
+     */
+    public function setExtensions($extensions)
+    {
+        $this->extensions = $extensions;
+
+        return $this;
+    }
+
+    /**
+     * @return \C2is\OTA\Model\HotelRes\Guest\Extensions
+     */
+    public function getExtensions()
+    {
+        return $this->extensions;
+    }
+
+    /**
+     * @param string $lang
+     * @return $this
+     */
+    public function setLang($lang)
+    {
+        $this->setExtensions($extension = new Extensions());
+        $extension->setPaxLangCode($paxLangCode = new PaxLangCode());
+        $paxLangCode->setCode($lang);
+
+        return $this;
     }
 }
