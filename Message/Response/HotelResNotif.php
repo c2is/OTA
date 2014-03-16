@@ -33,7 +33,7 @@ class HotelResNotif extends AbstractResponse
 {
     public function getName()
     {
-        return 'hotel_res';
+        return 'hotel_res_notif';
     }
 
     protected function getRequiredParams()
@@ -319,6 +319,6 @@ class HotelResNotif extends AbstractResponse
     {
         $serializer = \JMS\Serializer\SerializerBuilder::create()->build();
 
-        return $serializer->deserialize($this->getXml(), 'C2is\\OTA\\Model\\HotelRes\\HotelRes', 'xml');
+        return $serializer->deserialize($this->getXml(), 'C2is\\OTA\\Model\\HotelResNotif\\HotelResNotif', 'xml');
     }
 }

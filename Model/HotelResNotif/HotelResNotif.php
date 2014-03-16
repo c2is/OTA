@@ -102,6 +102,14 @@ class HotelResNotif
     private $reservations = array();
 
     /**
+     * @DI\SerializedName("Errors")
+     * @DI\XmlList(inline=false, entry="Error")
+     * @DI\Type("array<C2is\OTA\Model\Common\Error>")
+     * @var array
+     */
+    private $errors = array();
+
+    /**
      * Constructor.
      */
     public function __construct()
@@ -332,5 +340,33 @@ class HotelResNotif
     public function getReservations()
     {
         return $this->reservations;
+    }
+
+    /**
+     * @param array $errors
+     */
+    public function setErrors($errors)
+    {
+        $this->errors = $errors;
+
+        return $this;
+    }
+
+    /**
+     * @param array $error
+     */
+    public function addError(Error $error)
+    {
+        $this->errors[] = $error;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getErrors()
+    {
+        return $this->errors;
     }
 }

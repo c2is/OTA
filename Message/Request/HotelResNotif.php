@@ -37,7 +37,7 @@ class HotelResNotif extends AbstractMessage
 {
     public function getName()
     {
-        return 'hotel_res';
+        return 'hotel_res_notif';
     }
 
     protected function getRequiredParams()
@@ -101,8 +101,12 @@ class HotelResNotif extends AbstractMessage
                                 $objRate->setBase($objBase = new Base());
                                 $base = $rate['base'];
                                 $objBase->setAmountAfterTax($base['after_tax']);
-                                $objBase->setAmountBeforeTax($base['before_tax']);
-                                $objBase->setCurrency($base['currency']);
+                                if (isset($base['before_tax'])) {
+                                    $objBase->setAmountBeforeTax($base['before_tax']);
+                                }
+                                if (isset($base['currency'])) {
+                                    $objBase->setCurrency($base['currency']);
+                                }
 
                                 if (isset($rate['extensions'])) {
                                     $objBase->setExtensions($objExtensions = new Extensions());
@@ -119,13 +123,15 @@ class HotelResNotif extends AbstractMessage
                         }
                     }
 
-                    foreach ($roomStay['guest_counts'] as $guestCount) {
-                        $objRoomStay->addGuestCount($objGuestCount = new GuestCount());
-                        if (isset($guestCount['age'])) {
-                            $objGuestCount->setAge($guestCount['age']);
+                    if (isset($roomStay['guest_counts'])) {
+                        foreach ($roomStay['guest_counts'] as $guestCount) {
+                            $objRoomStay->addGuestCount($objGuestCount = new GuestCount());
+                            if (isset($guestCount['age'])) {
+                                $objGuestCount->setAge($guestCount['age']);
+                            }
+                            $objGuestCount->setAgeCode($guestCount['age_code']);
+                            $objGuestCount->setCount($guestCount['count']);
                         }
-                        $objGuestCount->setAgeCode($guestCount['age_code']);
-                        $objGuestCount->setCount($guestCount['count']);
                     }
 
                     if (isset($roomStay['timespan'])) {
@@ -136,9 +142,13 @@ class HotelResNotif extends AbstractMessage
 
                     if (isset($roomStay['total'])) {
                         $objRoomStay->setTotal($objTotal = new Total());
-                        $objTotal->setBeforeTax($roomStay['total']['before_tax']);
+                        if (isset($roomStay['total']['before_tax'])) {
+                            $objTotal->setBeforeTax($roomStay['total']['before_tax']);
+                        }
                         $objTotal->setAfterTax($roomStay['total']['after_tax']);
-                        $objTotal->setCurrency($roomStay['total']['currency']);
+                        if (isset($roomStay['total']['currency'])) {
+                            $objTotal->setCurrency($roomStay['total']['currency']);
+                        }
 
                         if (isset($roomStay['total']['taxes'])) {
                             $taxes = $roomStay['total']['taxes'];
@@ -188,16 +198,18 @@ class HotelResNotif extends AbstractMessage
                     $objService->setPricingType($service['pricing_type']);
                     $objService->setQuantity($service['quantity']);
 
-                    $amount = $service['amount'];
-                    $objBase = $objService->getPrice()->getBase();
-                    if (isset($amount['after_tax'])) {
-                        $objBase->setAfterTax($amount['after_tax']);
-                    }
-                    if (isset($amount['before_tax'])) {
-                        $objBase->setBeforeTax($amount['before_tax']);
-                    }
-                    if (isset($amount['currency'])) {
-                        $objBase->setCurrency($amount['currency']);
+                    if (isset($service['amount'])) {
+                        $amount = $service['amount'];
+                        $objBase = $objService->getPrice()->getBase();
+                        if (isset($amount['after_tax'])) {
+                            $objBase->setAfterTax($amount['after_tax']);
+                        }
+                        if (isset($amount['before_tax'])) {
+                            $objBase->setBeforeTax($amount['before_tax']);
+                        }
+                        if (isset($amount['currency'])) {
+                            $objBase->setCurrency($amount['currency']);
+                        }
                     }
 
                     if (in_array($objService->getPricingType(), array(Service::PRICING_TYPE_PER_NIGHT, Service::PRICING_TYPE_PER_PERSON_PER_NIGHT)) and isset($service['details'])) {
@@ -222,7 +234,9 @@ class HotelResNotif extends AbstractMessage
 
                     $objGuest->addCustomer($objCustomer = new Guest\Customer());
                     $objCustomer->setEmail($guest['email']);
-                    $objCustomer->setCurrency($guest['currency']);
+                    if (isset($guest['currency'])) {
+                        $objCustomer->setCurrency($guest['currency']);
+                    }
                     $objCustomer->setGender($guest['gender']);
 
                     if (isset($guest['person_name'])) {
@@ -233,9 +247,15 @@ class HotelResNotif extends AbstractMessage
 
                     if (isset($guest['address'])) {
                         $objCustomer->setAddress($objAddress = new Guest\Address());
-                        $objAddress->setLine($guest['address']['line']);
-                        $objAddress->setCity($guest['address']['city']);
-                        $objAddress->setPostalCode($guest['address']['postal_code']);
+                        if (isset($guest['address']['line'])) {
+                            $objAddress->setLine($guest['address']['line']);
+                        }
+                        if (isset($guest['address']['city'])) {
+                            $objAddress->setCity($guest['address']['city']);
+                        }
+                        if (isset($guest['address']['postal_code'])) {
+                            $objAddress->setPostalCode($guest['address']['postal_code']);
+                        }
                         if (isset($guest['address']['country'])) {
                             $objAddress->setCountryName($guest['address']['country']['name']);
                             $objAddress->setCountryCode($guest['address']['country']['code']);
@@ -273,6 +293,10 @@ class HotelResNotif extends AbstractMessage
                             }
                         }
                     }
+
+                    if (isset($guest['lang'])) {
+                        $objCustomer->setLang($guest['lang']);
+                    }
                 }
             }
 
@@ -298,7 +322,9 @@ class HotelResNotif extends AbstractMessage
                 if (isset($globalInfo['total'])) {
                     $objGlobalInfo->setTotal($objTotal = new Total());
                     $objTotal->setAfterTax($globalInfo['total']['after_tax']);
-                    $objTotal->setBeforeTax($globalInfo['total']['before_tax']);
+                    if (isset($globalInfo['total']['before_tax'])) {
+                        $objTotal->setBeforeTax($globalInfo['total']['before_tax']);
+                    }
                     if (isset($globalInfo['total']['currency'])) {
                         $objTotal->setCurrency($globalInfo['total']['currency']);
                     }
@@ -358,6 +384,6 @@ class HotelResNotif extends AbstractMessage
     {
         $serializer = \JMS\Serializer\SerializerBuilder::create()->build();
 
-        return $serializer->deserialize($this->getXml(), 'C2is\\OTA\\Model\\HotelRes\\HotelRes', 'xml');
+        return $serializer->deserialize($this->getXml(), 'C2is\\OTA\\Model\\HotelResNotif\\HotelResNotif', 'xml');
     }
 }
