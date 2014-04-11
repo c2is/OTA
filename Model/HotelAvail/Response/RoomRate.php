@@ -260,4 +260,32 @@ class RoomRate
 
         return $defaultValue;
     }
+
+    public function getMinStayLength()
+    {
+        $minStayLength = 0;
+
+        /** @var Rate $rate */
+        foreach ($this->rates as $rate) {
+            if (($minLos = $rate->getMinLos()) > $minStayLength) {
+                $minStayLength = $minLos;
+            }
+        }
+
+        return $minStayLength;
+    }
+
+    public function getMaxStayLength()
+    {
+        $maxStayLength = 0;
+
+        /** @var Rate $rate */
+        foreach ($this->rates as $rate) {
+            if (!$maxStayLength or ($rate->getMaxLos() < $maxStayLength)) {
+                $maxStayLength = $rate->getMaxLos();
+            }
+        }
+
+        return $maxStayLength;
+    }
 }

@@ -45,6 +45,13 @@ class Rate
      */
     private $minLos;
     /**
+     * @SerializedName("MaxLOS")
+     * @XmlAttribute
+     * @Type("integer")
+     * @var integer
+     */
+    private $maxLos;
+    /**
      * @SerializedName("RateTimeUnit")
      * @XmlAttribute
      * @Type("string")
@@ -175,6 +182,24 @@ class Rate
     public function getMinLos()
     {
         return $this->minLos;
+    }
+
+    /**
+     * @param int $maxLos
+     */
+    public function setMaxLos($maxLos)
+    {
+        $this->maxLos = $maxLos;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMaxLos()
+    {
+        return $this->maxLos;
     }
 
     /**
