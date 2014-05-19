@@ -63,6 +63,7 @@ class HotelResNotif extends AbstractMessage
         $hotelRes->setBookingCompanyName($this->getParam('booking.company_name'));
         $hotelRes->setStatus($this->getParam('status'));
         $hotelRes->setLang($this->getParam('lang', 'en'));
+        $hotelRes->setTarget($this->getParam('target', 'Test'));
 
         foreach ($this->getParam('reservations') as $reservation) {
             $hotelRes->addReservation($hotelReservation = new HotelReservation());

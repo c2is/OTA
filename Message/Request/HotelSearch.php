@@ -56,6 +56,7 @@ class HotelSearch extends AbstractMessage
         $hotelSearch->setMaxResponses($this->getParam('max_responses'));
         $hotelSearch->setLang($this->getParam('lang', 'en'));
         $hotelSearch->setCriteria($criteria = new Criteria());
+        $hotelSearch->setTarget($this->getParam('target', 'Test'));
 
         if ($hotel = $this->getParam('hotel') and is_array($hotel)) {
             if ($codes = $this->getParam('hotel.codes')) {
