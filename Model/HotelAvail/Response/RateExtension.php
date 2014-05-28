@@ -72,6 +72,13 @@ class RateExtension
     private $freeNight;
 
     /**
+     * @SerializedName("SpecialRateInfo")
+     * @Type("C2is\OTA\Model\HotelAvail\Response\SpecialRateInfo")
+     * @var \C2is\OTA\Model\HotelAvail\Response\SpecialRateInfo
+     */
+    private $specialRateInfo;
+
+    /**
      * @param \C2is\OTA\Model\HotelAvail\Response\Rate\BookingCancelPolicyRph $bookingCancelPolicyRPH
      */
     public function setBookingCancelPolicyRPH($bookingCancelPolicyRPH)
@@ -213,5 +220,24 @@ class RateExtension
     public function getFreeNight()
     {
         return $this->freeNight;
+    }
+
+    /**
+     * @param \C2is\OTA\Model\HotelAvail\Response\SpecialRateInfo $specialRateInfo
+     * @return $this
+     */
+    public function setSpecialRateInfo($specialRateInfo)
+    {
+        $this->specialRateInfo = $specialRateInfo;
+
+        return $this;
+    }
+
+    /**
+     * @return \C2is\OTA\Model\HotelAvail\Response\SpecialRateInfo
+     */
+    public function getSpecialRateInfo()
+    {
+        return $this->specialRateInfo;
     }
 }

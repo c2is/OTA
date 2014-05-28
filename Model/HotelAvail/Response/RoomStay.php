@@ -3,65 +3,69 @@
 namespace C2is\OTA\Model\HotelAvail\Response;
 
 use C2is\OTA\Model\Common\BasicPropertyInfo;
-use JMS\Serializer\Annotation\Type;
-use JMS\Serializer\Annotation\XmlList;
-use JMS\Serializer\Annotation\SerializedName;
-use JMS\Serializer\Annotation\AccessType;
+use JMS\Serializer\Annotation as DI;
 
 /**
  * Class RoomStay
  * @package C2is\OTA\Model\HotelAvail\Response
- * @AccessType("public_method")
+ * @DI\AccessType("public_method")
  */
 class RoomStay
 {
     /**
-     * @SerializedName("RoomTypes")
-     * @XmlList(inline=false, entry="RoomType")
-     * @Type("array<C2is\OTA\Model\HotelAvail\Response\RoomType>")
+     * @DI\SerializedName("RoomTypes")
+     * @DI\XmlList(inline=false, entry="RoomType")
+     * @DI\Type("array<C2is\OTA\Model\HotelAvail\Response\RoomType>")
      * @var array
      */
     private $roomTypes;
 
     /**
-     * @SerializedName("RoomRates")
-     * @XmlList(inline=false, entry="RoomRate")
-     * @Type("array<C2is\OTA\Model\HotelAvail\Response\RoomRate>")
+     * @DI\SerializedName("RoomRates")
+     * @DI\XmlList(inline=false, entry="RoomRate")
+     * @DI\Type("array<C2is\OTA\Model\HotelAvail\Response\RoomRate>")
      * @var array
      */
     private $roomRates;
 
     /**
-     * @SerializedName("GuestCounts")
-     * @XmlList(inline=false, entry="GuestCount")
-     * @Type("array<C2is\OTA\Model\HotelAvail\Response\GuestCount>")
+     * @DI\SerializedName("GuestCounts")
+     * @DI\XmlList(inline=false, entry="GuestCount")
+     * @DI\Type("array<C2is\OTA\Model\HotelAvail\Response\GuestCount>")
      * @var array
      */
     private $guestCounts;
 
     /**
-     * @SerializedName("Timespan")
-     * @Type("C2is\OTA\Model\Common\Timespan")
+     * @DI\SerializedName("Timespan")
+     * @DI\Type("C2is\OTA\Model\Common\Timespan")
      * @var \C2is\OTA\Model\Common\Timespan
      */
     private $timespan;
 
     /**
-     * @SerializedName("BasicPropertyInfo")
-     * @Type("C2is\OTA\Model\Common\BasicPropertyInfo")
+     * @DI\SerializedName("BasicPropertyInfo")
+     * @DI\Type("C2is\OTA\Model\Common\BasicPropertyInfo")
      * @var \C2is\OTA\Model\Common\BasicPropertyInfo
      */
     private $basicPropertyInfo;
 
     /**
-     * @SerializedName("TPA_Extensions")
-     * @Type("C2is\OTA\Model\HotelAvail\Response\RoomStayExtension")
+     * @DI\SerializedName("TPA_Extensions")
+     * @DI\Type("C2is\OTA\Model\HotelAvail\Response\RoomStayExtension")
      * @var \C2is\OTA\Model\HotelAvail\Response\RoomStayExtension
      */
     private $extensions;
 
     /**
+     * @DI\Exclude
+     * @var boolean
+     */
+    private $displayRack = null;
+
+    /**
      * @param array $roomTypes
+     * @return $this
      */
     public function setRoomTypes($roomTypes)
     {
@@ -80,6 +84,7 @@ class RoomStay
 
     /**
      * @param array $roomRates
+     * @return $this
      */
     public function setRoomRates($roomRates)
     {
@@ -98,6 +103,7 @@ class RoomStay
 
     /**
      * @param array $guestCounts
+     * @return $this
      */
     public function setGuestCounts($guestCounts)
     {
@@ -116,6 +122,7 @@ class RoomStay
 
     /**
      * @param \C2is\OTA\Model\Common\Timespan $timespan
+     * @return $this
      */
     public function setTimespan($timespan)
     {
@@ -153,6 +160,7 @@ class RoomStay
 
     /**
      * @param \C2is\OTA\Model\HotelAvail\Response\RoomStayExtension $extensions
+     * @return $this
      */
     public function setExtensions(RoomStayExtension $extensions)
     {
@@ -167,5 +175,38 @@ class RoomStay
     public function getExtensions()
     {
         return $this->extensions;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getDisplayRack()
+    {
+        if ($this->displayRack === null) {
+            $this->displayRack = true;
+            /** @var RoomRate $roomRate */
+            foreach ($this->getRoomRates() as $roomRate) {
+                /** @var Rate $rate */
+                foreach ($roomRate->getRates() as $rate) {
+                    if ($rate->getExtensions() && $rate->getExtensions()->getSpecialRateInfo() && !$rate->getExtensions()->getSpecialRateInfo()->getDisplayRack()) {
+                        $this->displayRack = false;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return $this->displayRack;
+    }
+
+    /**
+     * @param boolean $displayRack
+     * @return $this
+     */
+    public function setDisplayRack($displayRack)
+    {
+        $this->displayRack = $displayRack;
+
+        return $this;
     }
 }
