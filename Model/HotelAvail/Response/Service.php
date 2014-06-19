@@ -103,6 +103,13 @@ class Service
     private $details;
 
     /**
+     * @SerializedName("ServiceRPH")
+     * @Type("string")
+     * @var string
+     */
+    private $rph;
+
+    /**
      * @param boolean $inclusive
      */
     public function setInclusive($inclusive)
@@ -324,5 +331,24 @@ class Service
         }
 
         return $defaultValue;
+    }
+
+    /**
+     * @param string $rph
+     * @return $this
+     */
+    public function setRph($rph)
+    {
+        $this->rph = $rph;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRph()
+    {
+        return $this->rph;
     }
 }

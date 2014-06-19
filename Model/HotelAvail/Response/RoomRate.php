@@ -2,6 +2,7 @@
 
 namespace C2is\OTA\Model\HotelAvail\Response;
 
+use C2is\OTA\Model\HotelAvail\Response\Rate\ServiceRph;
 use JMS\Serializer\Annotation\Type;
 use JMS\Serializer\Annotation\XmlList;
 use JMS\Serializer\Annotation\XmlAttribute;
@@ -287,5 +288,22 @@ class RoomRate
         }
 
         return $maxStayLength;
+    }
+
+    public function getAllowedServices()
+    {
+        $serviceRphs = array();
+
+        /** @var Rate $rate */
+        foreach ($this->getRates() as $rate) {
+            /** @var ServiceRph $serviceRph */
+            foreach ($rate->getExtensions()->getServiceRphs() as $serviceRph) {
+                if (!in_array($serviceRph->getRph(), $serviceRphs)) {
+                    $serviceRphs[] = $serviceRph->getRph();
+                }
+            }
+        }
+
+        return $serviceRphs;
     }
 }

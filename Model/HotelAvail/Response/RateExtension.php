@@ -79,6 +79,14 @@ class RateExtension
     private $specialRateInfo;
 
     /**
+     * @SerializedName("ServiceRPHs")
+     * @XmlList(inline=false, entry="ServiceRPH")
+     * @Type("array<C2is\OTA\Model\HotelAvail\Response\Rate\ServiceRph>")
+     * @var array
+     */
+    private $serviceRphs = array();
+
+    /**
      * @param \C2is\OTA\Model\HotelAvail\Response\Rate\BookingCancelPolicyRph $bookingCancelPolicyRPH
      */
     public function setBookingCancelPolicyRPH($bookingCancelPolicyRPH)
@@ -239,5 +247,24 @@ class RateExtension
     public function getSpecialRateInfo()
     {
         return $this->specialRateInfo;
+    }
+
+    /**
+     * @param array $serviceRphs
+     * @return $this
+     */
+    public function setServiceRphs($serviceRphs)
+    {
+        $this->serviceRphs = $serviceRphs;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getServiceRphs()
+    {
+        return $this->serviceRphs;
     }
 }
