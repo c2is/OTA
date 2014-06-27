@@ -104,7 +104,8 @@ class Service
 
     /**
      * @SerializedName("ServiceRPH")
-     * @Type("string")
+     * @XmlAttribute
+     * @Type("integer")
      * @var string
      */
     private $rph;
