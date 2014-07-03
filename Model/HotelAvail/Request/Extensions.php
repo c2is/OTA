@@ -15,12 +15,20 @@ class Extensions
      * @var boolean
      */
     private $bStay;
+
     /**
      * @SerializedName("Filter")
      * @Type("C2is\OTA\Model\HotelAvail\Request\Filter")
      * @var \C2is\OTA\Model\HotelAvail\Request\Filter
      */
     private $filter;
+
+    /**
+     * @SerializedName("DiscountCodes")
+     * @Type("C2is\OTA\Model\HotelAvail\Request\DiscountCodes")
+     * @var \C2is\OTA\Model\HotelAvail\Request\DiscountCodes
+     */
+    private $discountCodes;
 
     /**
      * @param $bStay
@@ -57,5 +65,24 @@ class Extensions
     public function getFilter()
     {
         return $this->filter;
+    }
+
+    /**
+     * @param \C2is\OTA\Model\HotelAvail\Request\DiscountCodes $discountCodes
+     * @return $this
+     */
+    public function setDiscountCodes($discountCodes)
+    {
+        $this->discountCodes = $discountCodes;
+
+        return $this;
+    }
+
+    /**
+     * @return \C2is\OTA\Model\HotelAvail\Request\DiscountCodes
+     */
+    public function getDiscountCodes()
+    {
+        return $this->discountCodes;
     }
 }
