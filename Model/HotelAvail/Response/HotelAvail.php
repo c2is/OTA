@@ -3,6 +3,7 @@
 namespace C2is\OTA\Model\HotelAvail\Response;
 
 use C2is\OTA\Model\Common\Pos;
+use C2is\OTA\Model\Common\Warning;
 use JMS\Serializer\Annotation\Type;
 use JMS\Serializer\Annotation\XmlAttribute;
 use JMS\Serializer\Annotation\XmlList;
@@ -51,6 +52,14 @@ class HotelAvail
      * @var \C2is\OTA\Model\HotelAvail\Response\HotelAvailExtension
      */
     private $extensions;
+
+    /**
+     * @SerializedName("Warnings")
+     * @XmlList(inline=false, entry="Warning")
+     * @Type("array<C2is\OTA\Model\Common\Warning>")
+     * @var array
+     */
+    private $warnings;
 
     /**
      * @param $echoToken
@@ -153,5 +162,40 @@ class HotelAvail
     public function getExtensions()
     {
         return $this->extensions;
+    }
+
+    /**
+     * @param array $warnings
+     * @return $this
+     */
+    public function setWarnings($warnings)
+    {
+        $this->warnings = $warnings;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getWarnings()
+    {
+        return $this->warnings;
+    }
+
+    /**
+     * @param $code
+     * @return boolean
+     */
+    public function hasWarning($code)
+    {
+        /** @var Warning $warning */
+        foreach ($this->warnings as $warning) {
+            if ($warning->getCode() == $code) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

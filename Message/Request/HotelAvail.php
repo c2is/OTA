@@ -4,6 +4,7 @@ namespace C2is\OTA\Message\Request;
 
 use C2is\OTA\Message\AbstractMessage;
 use C2is\OTA\Model\HotelAvail\Request\AvailRequestSegment;
+use C2is\OTA\Model\HotelAvail\Request\DiscountCodes;
 use C2is\OTA\Model\HotelAvail\Request\Extensions;
 use C2is\OTA\Model\HotelAvail\Request\Filter;
 use C2is\OTA\Model\HotelAvail\Request\GuestCount;
@@ -112,14 +113,26 @@ class HotelAvail extends AbstractMessage
                 }
             }
 
-            if (isset($request['formatters'])) {
+            if (isset($request['formatters']) || isset($request['promoCode'])) {
                 $availRequestSegment->setExtensions($extensions = new Extensions());
-                $extensions->setFilter($fitler = new Filter());
-                foreach ($request['formatters'] as $type => $value) {
-                    $formatter = new TextDelimiter();
-                    $formatter->setOn($type);
-                    $formatter->setValue($value);
-                    $fitler->addResponseFormatter($formatter);
+                if (isset($request['formatters'])) {
+                    $extensions->setFilter($fitler = new Filter());
+                    foreach ($request['formatters'] as $type => $value) {
+                        $formatter = new TextDelimiter();
+                        $formatter->setOn($type);
+                        $formatter->setValue($value);
+                        $fitler->addResponseFormatter($formatter);
+                    }
+                }
+
+                if ($promoCode = $this->getParam('promoCode')) {
+                    $extensions->setDiscountCodes($discountCodes = new DiscountCodes());
+                    if (isset($promoCode['exclusive'])) {
+                        $discountCodes->setExclusive($promoCode['exclusive']);
+                    }
+                    if (isset($promoCode['code'])) {
+                        $discountCodes->setCode($promoCode['code']);
+                    }
                 }
             }
         }
