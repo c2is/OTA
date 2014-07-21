@@ -38,6 +38,14 @@ class Guarantee
     private $guaranteesAccepted;
 
     /**
+     * @SerializedName("DepositPayments")
+     * @XmlList(inline=false, entry="GuaranteePayment")
+     * @Type("array<C2is\OTA\Model\HotelRes\GlobalInfo\GuaranteePayment>")
+     * @var array
+     */
+    private $guaranteesPayments;
+
+    /**
      * @param string $type
      */
     public function setType($type)
@@ -85,5 +93,34 @@ class Guarantee
     public function getGuaranteesAccepted()
     {
         return $this->guaranteesAccepted;
+    }
+
+    /**
+     * @param array $guaranteesPayments
+     * @return $this
+     */
+    public function setGuaranteesPayments($guaranteesPayments)
+    {
+        $this->guaranteesPayments = $guaranteesPayments;
+
+        return $this;
+    }
+
+    /**
+     * @param GuaranteePayment $guaranteePayment
+     */
+    public function addGuaranteePayment($guaranteePayment)
+    {
+        $this->guaranteesAccepted[] = $guaranteePayment;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getGuaranteesPayments()
+    {
+        return $this->guaranteesPayments;
     }
 }
