@@ -5,6 +5,7 @@ namespace C2is\OTA\Model\HotelRes;
 use C2is\OTA\Model\Common\Comment;
 use C2is\OTA\Model\Common\Total;
 use C2is\OTA\Model\HotelRes\GlobalInfo\Guarantee;
+use C2is\OTA\Model\HotelRes\GlobalInfo\GuaranteePayment;
 use C2is\OTA\Model\HotelRes\GlobalInfo\HotelReservationId;
 use JMS\Serializer\Annotation\Type;
 use JMS\Serializer\Annotation\XmlAttribute;
@@ -42,6 +43,14 @@ class GlobalInfo
      * @var array
      */
     private $hotelReservationIds;
+
+    /**
+     * @SerializedName("DepositPayments")
+     * @XmlList(inline=false, entry="GuaranteePayment")
+     * @Type("array<C2is\OTA\Model\HotelRes\GlobalInfo\GuaranteePayment>")
+     * @var array
+     */
+    private $guaranteesPayments;
 
     /**
      * @param array $comments
@@ -133,5 +142,34 @@ class GlobalInfo
     public function getHotelReservationIds()
     {
         return $this->hotelReservationIds;
+    }
+
+    /**
+     * @param array $guaranteesPayments
+     * @return $this
+     */
+    public function setGuaranteesPayments($guaranteesPayments)
+    {
+        $this->guaranteesPayments = $guaranteesPayments;
+
+        return $this;
+    }
+
+    /**
+     * @param GuaranteePayment $guaranteePayment
+     */
+    public function addGuaranteePayment($guaranteePayment)
+    {
+        $this->guaranteesPayments[] = $guaranteePayment;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getGuaranteesPayments()
+    {
+        return $this->guaranteesPayments;
     }
 }
