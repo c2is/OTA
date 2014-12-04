@@ -14,6 +14,6 @@
     "target-dir": "C2is/OTA",
     "minimum-stability": "dev",
     "require": {
-        "jms/serializer": "dev-master"
+        "jms/serializer": "dev-master#740c63a7805a7ad53e3333d859b8753f68066bb6"
     }
 }
