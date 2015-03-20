@@ -19,6 +19,14 @@ class AmountPercent
     private $amount;
 
     /**
+     * @DI\SerializedName("Percent")
+     * @DI\Type("string")
+     * @DI\XmlAttribute
+     * @var string
+     */
+    private $percent;
+
+    /**
      * @param string $amount
      * @return $this
      */
@@ -35,5 +43,21 @@ class AmountPercent
     public function getAmount()
     {
         return $this->amount;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPercent()
+    {
+        return $this->percent;
+    }
+
+    /**
+     * @param string $percent
+     */
+    public function setPercent($percent)
+    {
+        $this->percent = $percent;
     }
 }
