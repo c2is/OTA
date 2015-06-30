@@ -21,7 +21,7 @@ class Comment
      * @Type("boolean")
      * @var boolean
      */
-    private $guestViewable = true;
+    private $guestViewable = false;
 
     /**
      * @SerializedName("CommentOriginatorCode")
