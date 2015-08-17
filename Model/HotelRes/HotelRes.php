@@ -267,10 +267,10 @@ class HotelRes
      */
     public function setBookingType($bookingType)
     {
-        if (!$this->pos->getBookingChannel()) {
-            $this->pos->setBookingChannel(new BookingChannel());
+        if (!$this->pos->getSource()->getBookingChannel()) {
+            $this->pos->getSource()->setBookingChannel(new BookingChannel());
         }
-        $this->pos->getBookingChannel()->setType($bookingType);
+        $this->pos->getSource()->getBookingChannel()->setType($bookingType);
 
         return $this;
     }
@@ -281,10 +281,10 @@ class HotelRes
      */
     public function setBookingCompanyName($bookingCompanyName)
     {
-        if (!$this->pos->getBookingChannel()) {
-            $this->pos->setBookingChannel(new BookingChannel());
+        if (!$this->pos->getSource()->getBookingChannel()) {
+            $this->pos->getSource()->setBookingChannel(new BookingChannel());
         }
-        $this->pos->getBookingChannel()->getCompanyName()->setName($bookingCompanyName);
+        $this->pos->getSource()->getBookingChannel()->getCompanyName()->setName($bookingCompanyName);
 
         return $this;
     }
@@ -295,10 +295,10 @@ class HotelRes
      */
     public function setBookingCompanyCode($bookingCompanyCode)
     {
-        if (!$this->pos->getBookingChannel()) {
-            $this->pos->setBookingChannel(new BookingChannel());
+        if (!$this->pos->getSource()->getBookingChannel()) {
+            $this->pos->getSource()->setBookingChannel(new BookingChannel());
         }
-        $this->pos->getBookingChannel()->getCompanyName()->setCode($bookingCompanyCode);
+        $this->pos->getSource()->getBookingChannel()->getCompanyName()->setCode($bookingCompanyCode);
 
         return $this;
     }

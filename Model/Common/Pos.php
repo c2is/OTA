@@ -17,13 +17,6 @@ class Pos
     private $source;
 
     /**
-     * @SerializedName("BookingChannel")
-     * @Type("C2is\OTA\Model\Common\BookingChannel")
-     * @var BookingChannel
-     */
-    private $bookingChannel;
-
-    /**
      * Constructor.
      */
     public function __construct()
@@ -48,23 +41,5 @@ class Pos
     public function getSource()
     {
         return $this->source;
-    }
-
-    /**
-     * @param \C2is\OTA\Model\Common\BookingChannel $bookingChannel
-     */
-    public function setBookingChannel(BookingChannel $bookingChannel)
-    {
-        $this->bookingChannel = $bookingChannel;
-
-        return $this;
-    }
-
-    /**
-     * @return \C2is\OTA\Model\Common\BookingChannel
-     */
-    public function getBookingChannel()
-    {
-        return $this->bookingChannel;
     }
 }

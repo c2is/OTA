@@ -17,6 +17,13 @@ class Source
     private $requestorId;
 
     /**
+     * @SerializedName("BookingChannel")
+     * @Type("C2is\OTA\Model\Common\BookingChannel")
+     * @var BookingChannel
+     */
+    private $bookingChannel;
+
+    /**
      * Constructor.
      */
     public function __construct()
@@ -41,5 +48,25 @@ class Source
     public function getRequestorId()
     {
         return $this->requestorId;
+    }
+
+    /**
+     * @param \C2is\OTA\Model\Common\BookingChannel $bookingChannel
+     *
+     * @return $this
+     */
+    public function setBookingChannel(BookingChannel $bookingChannel)
+    {
+        $this->bookingChannel = $bookingChannel;
+
+        return $this;
+    }
+
+    /**
+     * @return \C2is\OTA\Model\Common\BookingChannel
+     */
+    public function getBookingChannel()
+    {
+        return $this->bookingChannel;
     }
 }
